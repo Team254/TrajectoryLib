@@ -6,8 +6,10 @@
 
 package com.team254.lib.trajectory;
 
+import com.team254.lib.trajectory.Trajectory.Segment;
 import static com.team254.lib.trajectory.TrajectoryGenerator.SCurvesStrategy;
 import static com.team254.lib.trajectory.TrajectoryGenerator.generate;
+import com.team254.lib.util.ChezyMath;
 
 /**
  * Generate a smooth Trajectory from a Path.
@@ -17,6 +19,11 @@ import static com.team254.lib.trajectory.TrajectoryGenerator.generate;
  * @author Jared341
  */
 public class PathGenerator {
+  
+  public static class PathProfile {
+    public Trajectory left;
+    public Trajectory right;
+  }
   
   public static Trajectory generateFromPath(Path path,
           TrajectoryGenerator.Config config) {
@@ -49,17 +56,84 @@ public class PathGenerator {
     double cur_spline_start_pos = 0;
     for (int i = 0; i < traj.getNumSegments(); ++i) {
       double cur_pos = traj.getSegment(i).pos;
-      double cur_pos_relative = cur_pos - cur_spline_start_pos;
       
-      if (cur_pos_relative <= spline_lengths[cur_spline]) {
-        double percentage = cur_pos_relative / spline_lengths[cur_spline];
-        traj.getSegment(i).heading = splines[cur_spline].angleAt(percentage);
-      } else {
-        cur_spline_start_pos = cur_pos;
-        ++cur_spline;
+      boolean found_spline = false;
+      while (!found_spline) {
+        double cur_pos_relative = cur_pos - cur_spline_start_pos;
+        if (cur_pos_relative <= spline_lengths[cur_spline]) {
+          double percentage = cur_pos_relative / spline_lengths[cur_spline];
+          traj.getSegment(i).heading = splines[cur_spline].angleAt(percentage);
+          found_spline = true;
+        } else {
+          cur_spline_start_pos = cur_pos;
+          ++cur_spline;
+        }
       }
     }
     
     return traj;
+  }
+  
+  public static PathProfile makeLeftAndRightTrajectories(Trajectory input,
+          double wheelbase_width) {
+    PathProfile profile = new PathProfile();
+    profile.left = input.copy();
+    profile.right = input.copy();
+    
+    double left_total = 0;
+    double right_total = 0;
+    for (int i = 0; i < input.getNumSegments(); ++i) {      
+      Segment current = input.getSegment(i);
+      Segment next = current;
+      if (i < input.getNumSegments() - 1) {
+        next = input.getSegment(i+1);
+      }
+      double delta_heading = ChezyMath.getDifferenceInAngleRadians(next.heading,
+              current.heading);
+      Segment inner, outer;
+      double inner_last_pos, outer_last_pos;
+      if (delta_heading > 0) {
+        outer = profile.right.getSegment(i);
+        inner = profile.left.getSegment(i);
+        outer_last_pos = right_total;
+        inner_last_pos = left_total;
+      } else {
+        outer = profile.left.getSegment(i);
+        inner = profile.right.getSegment(i);
+        outer_last_pos = left_total;
+        inner_last_pos = right_total;
+      }
+
+      double radius, scaling_inner, scaling_outer;
+      if (Math.abs(delta_heading) > 1E-6) {
+        radius = current.vel * current.dt / Math.abs(delta_heading);
+        scaling_inner = (radius - wheelbase_width/2) / radius;
+        scaling_outer = (radius + wheelbase_width/2) / radius;
+      } else {
+        scaling_inner = 1;
+        scaling_outer = 1;
+      }
+      inner.vel = scaling_inner * current.vel;
+      double inner_delta = scaling_inner * inner.vel * inner.dt;
+      inner.pos = inner_last_pos + inner_delta;
+      inner.acc = scaling_inner * current.acc;
+      inner.jerk = scaling_inner * current.jerk;
+
+      outer.vel = scaling_outer * current.vel;
+      double outer_delta = scaling_outer * outer.vel * outer.dt;
+      outer.pos = outer_last_pos + outer_delta;
+      outer.acc = scaling_outer * current.acc;
+      outer.jerk = scaling_outer * current.jerk;
+      
+      if (delta_heading > 0) {
+        left_total += inner_delta;
+        right_total += outer_delta;
+      } else {
+        left_total += outer_delta;
+        right_total += inner_delta;
+      }
+    }
+    
+    return profile;
   }
 }

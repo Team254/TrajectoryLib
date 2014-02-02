@@ -165,7 +165,7 @@ public class ChezyMath {
     while (angle >= Math.PI) {
       angle -= 2.0 * Math.PI;
     }
-    while (angle < Math.PI) {
+    while (angle < -Math.PI) {
       angle += 2.0 * Math.PI;
     }
     return angle;

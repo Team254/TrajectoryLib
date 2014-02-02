@@ -165,7 +165,6 @@ public class TrajectoryGenerator {
     } else {
       return null;
     }
-    traj.dt_ = config.dt;
 
     // Now assign headings by interpolating along the path.
     double total_heading_change = ChezyMath.getDifferenceInAngleDegrees(
@@ -200,6 +199,7 @@ public class TrajectoryGenerator {
     last.vel = start_vel;
     last.acc = 0;
     last.jerk = 0;
+    last.dt = dt;
 
         // f2 is the average of the last f2_length samples from f1, so while we
     // can recursively compute f2's sum, we need to keep a buffer for f1.
@@ -251,6 +251,7 @@ public class TrajectoryGenerator {
       // acceleration, respectively.
       traj.segments_[i].acc = (traj.segments_[i].vel - last.vel) / dt;
       traj.segments_[i].jerk = (traj.segments_[i].acc - last.acc) / dt;
+      traj.segments_[i].dt = dt;
 
       last = traj.segments_[i];
     }

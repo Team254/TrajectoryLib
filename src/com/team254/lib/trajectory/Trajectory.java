@@ -10,7 +10,7 @@ public class Trajectory {
 
   public static class Segment {
 
-    public double pos, vel, acc, jerk, heading;
+    public double pos, vel, acc, jerk, heading, dt;
 
     public Segment() {
     }
@@ -21,6 +21,7 @@ public class Trajectory {
       acc = to_copy.acc;
       jerk = to_copy.jerk;
       heading = to_copy.heading;
+      dt = to_copy.dt;
     }
 
     public String toString() {
@@ -30,17 +31,12 @@ public class Trajectory {
   }
 
   Segment[] segments_ = null;
-  double dt_;
 
   Trajectory(int length) {
     segments_ = new Segment[length];
     for (int i = 0; i < length; ++i) {
       segments_[i] = new Segment();
     }
-  }
-
-  public double getDt() {
-    return dt_;
   }
 
   public int getNumSegments() {
@@ -81,7 +77,6 @@ public class Trajectory {
   public Trajectory copy() {
     Trajectory cloned
             = new Trajectory(getNumSegments());
-    cloned.dt_ = dt_;
     for (int i = 0; i < getNumSegments(); ++i) {
       cloned.segments_[i] = new Segment(segments_[i]);
     }
