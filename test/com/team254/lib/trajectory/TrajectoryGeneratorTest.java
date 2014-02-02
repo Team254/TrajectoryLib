@@ -18,7 +18,7 @@ import org.junit.Test;
  *
  * @author jarussell
  */
-public class TrajectoryGeneratorTests {
+public class TrajectoryGeneratorTest {
 
   static void test(double start_vel, double goal_vel, double goal_distance,
           TrajectoryGenerator.Strategy strategy) {
@@ -45,7 +45,7 @@ public class TrajectoryGeneratorTests {
     Assert.assertFalse(Math.abs(last.heading - 75.0) > 1.0);
   }
 
-  public TrajectoryGeneratorTests() {
+  public TrajectoryGeneratorTest() {
   }
 
   @BeforeClass

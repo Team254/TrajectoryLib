@@ -23,8 +23,20 @@ public class Spline {
     // All splines should be made via the static interface
   }
   
+  private static boolean almostEqual(double x, double y) {
+    return Math.abs(x-y) < 1E-6;
+  }
+  
+  public static boolean reticulateSplines(Path.Waypoint start,
+          Path.Waypoint goal, Spline result) {
+    return reticulateSplines(start.x, start.y, start.theta, goal.x, goal.y,
+            goal.theta, result);
+  }
+  
   public static boolean reticulateSplines(double x0, double y0, double theta0,
           double x1, double y1, double theta1, Spline result) {
+    System.out.println("Reticulating splines...");
+    
     // Transform x to the origin
     result.y_offset_ = y0;
     double x1_hat = Math.sqrt((x1-x0)*(x1-x0) + (y1-y0)*(y1-y0));
@@ -37,7 +49,12 @@ public class Spline {
     double theta1_hat = theta1 - result.theta_offset_;
     
     // Turn angles into derivatives (slopes)
-    if (Math.signum(theta0_hat) != Math.signum(theta1_hat)) {
+    if (almostEqual(Math.abs(theta0_hat), Math.PI/2) ||
+            almostEqual(Math.abs(theta1_hat), Math.PI/2)) {
+      return false;
+    }
+    if (theta0_hat != 0 && theta1_hat != 0 && 
+            Math.signum(theta0_hat) != Math.signum(theta1_hat)) {
       return false;
     }
     double yp0_hat = Math.tan(theta0_hat);

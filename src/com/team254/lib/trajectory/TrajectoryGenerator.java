@@ -108,7 +108,7 @@ public class TrajectoryGenerator {
     if (strategy == StepStrategy) {
       double impulse = (goal_pos / config.max_vel) / config.dt;
 
-            // Round down, meaning we may undershoot by less than max_vel*dt.
+      // Round down, meaning we may undershoot by less than max_vel*dt.
       // This is due to discretization and avoids a strange final
       // velocity.
       int time = (int) (Math.floor(impulse));
