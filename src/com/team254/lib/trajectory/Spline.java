@@ -23,10 +23,6 @@ public class Spline {
     // All splines should be made via the static interface
   }
   
-  private static boolean almostEqual(double x, double y) {
-    return Math.abs(x-y) < 1E-6;
-  }
-  
   public static boolean reticulateSplines(double x0, double y0, double theta0,
           double x1, double y1, double theta1, Spline result) {
     // Transform x to the origin
@@ -56,8 +52,16 @@ public class Spline {
   }
   
   public double calculateLength() {
-    // TODO
-    return 0;
+    final int kNumSamples = 1000;
+    double arc_length = 0;
+    for (int i = 0; i <= kNumSamples; ++i) {
+      double x = ((double)i) / kNumSamples * x_distance_;
+      arc_length += Math.sqrt(9*a_*a_*x*x*x*x+12*a_*b_*x*x*x + 6*a_*c_*x*x +
+              4*b_*b_*x*x + 4*b_*c_*x + c_*c_+1);
+    }
+    arc_length /= (kNumSamples + 1);
+    arc_length *= x_distance_;
+    return arc_length;
   }
   
   public double valueAt(double percentage) {
