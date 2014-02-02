@@ -4,7 +4,7 @@ import com.team254.lib.util.ChezyMath;
 
 /**
  * Do cubic spline interpolation between points.
- * 
+ * @author Art Kalb
  * @author Jared341
  */
 public class Spline {

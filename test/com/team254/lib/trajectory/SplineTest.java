@@ -14,8 +14,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- *
- * @author jarussell
+ * Unit test for Spline class.
+ * 
+ * @author Art Kalb
+ * @author Jared341
  */
 public class SplineTest {
   
