@@ -167,6 +167,8 @@ public class TrajectoryGenerator {
     }
 
     // Now assign headings by interpolating along the path.
+    // TODO(Jared341): Degrees here, radians in other files.
+    // TODO(Jared341): Set delta_heading too.
     double total_heading_change = ChezyMath.getDifferenceInAngleDegrees(
             start_heading, goal_heading);
     for (int i = 0; i < traj.getNumSegments(); ++i) {

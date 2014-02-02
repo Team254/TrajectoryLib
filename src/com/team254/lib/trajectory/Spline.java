@@ -92,7 +92,7 @@ public class Spline {
     return x_hat * sin_theta + y_hat * cos_theta + y_offset_;
   }
   
-  private double slopeAt(double percentage) {
+  private double derivativeAt(double percentage) {
     percentage = Math.max(Math.min(percentage, 1), 0);
     
     double x_hat = percentage*x_distance_;
@@ -101,9 +101,23 @@ public class Spline {
     return yp_hat;
   }
   
+  private double secondDerivativeAt(double percentage) {
+    percentage = Math.max(Math.min(percentage, 1), 0);
+    
+    double x_hat = percentage*x_distance_;
+    double ypp_hat = 6*a_*x_hat + 2*b_;
+    
+    return ypp_hat;
+  }
+  
   public double angleAt(double percentage) {
-    return ChezyMath.boundAngle0to2PiRadians(Math.atan(slopeAt(percentage)) +
-            theta_offset_);
+    return ChezyMath.boundAngle0to2PiRadians(
+            Math.atan(derivativeAt(percentage)) + theta_offset_);
+  }
+  
+  public double angleChangeAt(double percentage) {
+    return ChezyMath.boundAngleNegPiToPiRadians(
+            Math.atan(secondDerivativeAt(percentage)));
   }
   
   public String toString() {

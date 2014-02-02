@@ -6,7 +6,6 @@
 
 package com.team254.lib.trajectory;
 
-import com.team254.lib.trajectory.PathGenerator.PathProfile;
 import static com.team254.lib.trajectory.TrajectoryGeneratorTest.test;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -36,13 +35,13 @@ public class PathGeneratorTest {
     System.out.println("Final distance=" +
             traj.getSegment(traj.getNumSegments()-1).pos);
     
-    PathProfile path_profile = PathGenerator.makeLeftAndRightTrajectories(traj,
+    Trajectory[] output = PathGenerator.makeLeftAndRightTrajectories(traj,
             20.0);
     
     System.out.println("LEFT PROFILE:");
-    System.out.println(path_profile.left.toString());
+    System.out.println(output[0].toString());
     System.out.println("RIGHT PROFILE:");
-    System.out.println(path_profile.right.toString());
+    System.out.println(output[1].toString());
   }
   
   public PathGeneratorTest() {

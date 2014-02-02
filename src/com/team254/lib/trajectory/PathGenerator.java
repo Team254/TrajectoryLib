@@ -19,12 +19,6 @@ import com.team254.lib.util.ChezyMath;
  * @author Jared341
  */
 public class PathGenerator {
-  
-  public static class PathProfile {
-    public Trajectory left;
-    public Trajectory right;
-  }
-  
   public static Trajectory generateFromPath(Path path,
           TrajectoryGenerator.Config config) {
     if (path.getNumWaypoints() < 2) {
@@ -63,6 +57,8 @@ public class PathGenerator {
         if (cur_pos_relative <= spline_lengths[cur_spline]) {
           double percentage = cur_pos_relative / spline_lengths[cur_spline];
           traj.getSegment(i).heading = splines[cur_spline].angleAt(percentage);
+          traj.getSegment(i).delta_heading =
+                  splines[cur_spline].angleChangeAt(percentage);
           found_spline = true;
         } else {
           cur_spline_start_pos = cur_pos;
@@ -74,11 +70,13 @@ public class PathGenerator {
     return traj;
   }
   
-  public static PathProfile makeLeftAndRightTrajectories(Trajectory input,
+  public static Trajectory[] makeLeftAndRightTrajectories(Trajectory input,
           double wheelbase_width) {
-    PathProfile profile = new PathProfile();
-    profile.left = input.copy();
-    profile.right = input.copy();
+    Trajectory[] output = new Trajectory[2];
+    output[0] = input.copy();
+    output[1] = input.copy();
+    Trajectory left = output[0];
+    Trajectory right = output[1];
     
     double left_total = 0;
     double right_total = 0;
@@ -93,13 +91,13 @@ public class PathGenerator {
       Segment inner, outer;
       double inner_last_pos, outer_last_pos;
       if (delta_heading > 0) {
-        outer = profile.right.getSegment(i);
-        inner = profile.left.getSegment(i);
+        outer = right.getSegment(i);
+        inner = left.getSegment(i);
         outer_last_pos = right_total;
         inner_last_pos = left_total;
       } else {
-        outer = profile.left.getSegment(i);
-        inner = profile.right.getSegment(i);
+        outer = left.getSegment(i);
+        inner = right.getSegment(i);
         outer_last_pos = left_total;
         inner_last_pos = right_total;
       }
@@ -134,6 +132,6 @@ public class PathGenerator {
       }
     }
     
-    return profile;
+    return output;
   }
 }

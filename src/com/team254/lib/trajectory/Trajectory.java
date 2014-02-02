@@ -10,7 +10,7 @@ public class Trajectory {
 
   public static class Segment {
 
-    public double pos, vel, acc, jerk, heading, dt;
+    public double pos, vel, acc, jerk, heading, delta_heading, dt;
 
     public Segment() {
     }
@@ -21,12 +21,14 @@ public class Trajectory {
       acc = to_copy.acc;
       jerk = to_copy.jerk;
       heading = to_copy.heading;
+      delta_heading = to_copy.delta_heading;
       dt = to_copy.dt;
     }
 
     public String toString() {
       return "pos: " + pos + "; vel: " + vel + "; acc: " + acc + "; jerk: "
-              + jerk + "; heading: " + heading;
+              + jerk + "; heading: " + heading + "; delta_heading: " + 
+              delta_heading;
     }
   }
 
@@ -92,7 +94,8 @@ public class Trajectory {
       str += segment.vel + "\t";
       str += segment.acc + "\t";
       str += segment.jerk + "\t";
-      str += segment.heading;
+      str += segment.heading + "\t";
+      str += segment.delta_heading + "\t";
       str += "\n";
     }
 
