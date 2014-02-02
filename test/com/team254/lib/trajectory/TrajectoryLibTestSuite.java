@@ -19,7 +19,9 @@ import org.junit.runners.Suite;
  * @author Jared341
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({com.team254.lib.trajectory.TrajectoryGeneratorTests.class})
+@Suite.SuiteClasses({
+  com.team254.lib.trajectory.TrajectoryGeneratorTests.class,
+  com.team254.lib.trajectory.SplineTest.class})
 public class TrajectoryLibTestSuite {
 
   @BeforeClass
