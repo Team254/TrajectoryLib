@@ -60,9 +60,13 @@ public class PathGenerator {
           traj.getSegment(i).delta_heading =
                   splines[cur_spline].angleChangeAt(percentage);
           found_spline = true;
-        } else {
+        } else if (cur_spline < splines.length) {
           cur_spline_start_pos = cur_pos;
           ++cur_spline;
+        } else {
+          traj.getSegment(i).heading = splines[splines.length].angleAt(1.0);
+          traj.getSegment(i).delta_heading = 
+                  splines[splines.length].angleChangeAt(1.0);
         }
       }
     }
