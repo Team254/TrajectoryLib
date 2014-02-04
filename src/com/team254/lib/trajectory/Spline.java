@@ -16,6 +16,7 @@ public class Spline {
   // The offset from the world frame to the spline frame.
   // Add these to the output of the spline to obtain world coordinates.
   double y_offset_;
+  double x_offset_;
   double x_distance_;
   double theta_offset_;
   
@@ -38,6 +39,7 @@ public class Spline {
     System.out.println("Reticulating splines...");
     
     // Transform x to the origin
+    result.x_offset_ = x0;
     result.y_offset_ = y0;
     double x1_hat = Math.sqrt((x1-x0)*(x1-x0) + (y1-y0)*(y1-y0));
     if (x1_hat == 0) {
@@ -45,24 +47,32 @@ public class Spline {
     }
     result.x_distance_ = x1_hat;
     result.theta_offset_ = Math.atan2(y1-y0, x1-x0);
-    double theta0_hat = theta0 - result.theta_offset_;
-    double theta1_hat = theta1 - result.theta_offset_;
+    double theta0_hat = ChezyMath.getDifferenceInAngleRadians(
+            result.theta_offset_, theta0);
+    double theta1_hat = ChezyMath.getDifferenceInAngleRadians(
+            result.theta_offset_, theta1);
     
-    // Turn angles into derivatives (slopes)
+    // We cannot handle vertical slopes in our rotated, translated basis.
+    // This would mean the user wants to end up 90 degrees off of the straight
+    // line between p0 and p1.
     if (almostEqual(Math.abs(theta0_hat), Math.PI/2) ||
             almostEqual(Math.abs(theta1_hat), Math.PI/2)) {
       return false;
     }
-    if (theta0_hat != 0 && theta1_hat != 0 && 
-            Math.signum(theta0_hat) != Math.signum(theta1_hat)) {
+    // We also cannot handle the case that the end angle is facing towards the
+    // start angle (total turn > 90 degrees).
+    if (Math.abs(ChezyMath.getDifferenceInAngleRadians(theta0_hat, theta1_hat)) 
+            >= Math.PI/2) {
       return false;
     }
+    
+    // Turn angles into derivatives (slopes)
     double yp0_hat = Math.tan(theta0_hat);
     double yp1_hat = Math.tan(theta1_hat);
     
     // Calculate the cubic spline coefficients
-    result.a_ = (3*yp1_hat - yp0_hat) / (x1_hat*x1_hat);
-    result.b_ = (yp1_hat - yp0_hat - 3*result.a_*x1_hat*x1_hat) / (2*x1_hat);
+    result.a_ = (yp1_hat + yp0_hat) / (x1_hat*x1_hat);
+    result.b_ = -(2*yp0_hat + yp1_hat) / x1_hat;
     result.c_ = yp0_hat;
     
     return true;
@@ -81,6 +91,21 @@ public class Spline {
     return arc_length;
   }
   
+  public double[] getXandY(double percentage) {
+    double[] result = new double[2];
+    
+    percentage = Math.max(Math.min(percentage, 1), 0);
+    double x_hat = percentage*x_distance_;
+    double y_hat = a_*x_hat*x_hat*x_hat + b_*x_hat*x_hat + c_*x_hat;
+    
+    double cos_theta = Math.cos(theta_offset_);
+    double sin_theta = Math.sin(theta_offset_);
+    
+    result[0] = x_hat * cos_theta - y_hat * sin_theta + x_offset_;
+    result[1] = x_hat * sin_theta + y_hat * cos_theta + y_offset_;
+    return result;
+  }
+  
   public double valueAt(double percentage) {
     percentage = Math.max(Math.min(percentage, 1), 0);
     double x_hat = percentage*x_distance_;
@@ -89,7 +114,8 @@ public class Spline {
     double cos_theta = Math.cos(theta_offset_);
     double sin_theta = Math.sin(theta_offset_);
     
-    return x_hat * sin_theta + y_hat * cos_theta + y_offset_;
+    double value = x_hat * sin_theta + y_hat * cos_theta + y_offset_;
+    return value;
   }
   
   private double derivativeAt(double percentage) {
@@ -111,8 +137,9 @@ public class Spline {
   }
   
   public double angleAt(double percentage) {
-    return ChezyMath.boundAngle0to2PiRadians(
+    double angle = ChezyMath.boundAngle0to2PiRadians(
             Math.atan(derivativeAt(percentage)) + theta_offset_);
+    return angle;
   }
   
   public double angleChangeAt(double percentage) {

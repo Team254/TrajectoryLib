@@ -10,7 +10,7 @@ public class Trajectory {
 
   public static class Segment {
 
-    public double pos, vel, acc, jerk, heading, delta_heading, dt;
+    public double pos, vel, acc, jerk, heading, delta_heading, dt, x, y;
 
     public Segment() {
     }
@@ -23,6 +23,8 @@ public class Trajectory {
       heading = to_copy.heading;
       delta_heading = to_copy.delta_heading;
       dt = to_copy.dt;
+      x = to_copy.x;
+      y = to_copy.y;
     }
 
     public String toString() {
@@ -96,6 +98,24 @@ public class Trajectory {
       str += segment.jerk + "\t";
       str += segment.heading + "\t";
       str += segment.delta_heading + "\t";
+      str += "\n";
+    }
+
+    return str;
+  }
+  
+  public String toStringProfile() {
+    return toString();
+  }
+  
+  public String toStringEuclidean() { 
+    String str = "Segment\tx\ty\tHeading\n";
+    for (int i = 0; i < getNumSegments(); ++i) {
+      Trajectory.Segment segment = getSegment(i);
+      str += i + "\t";
+      str += segment.x + "\t";
+      str += segment.y + "\t";
+      str += segment.heading + "\t";
       str += "\n";
     }
 

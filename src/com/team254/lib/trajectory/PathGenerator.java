@@ -48,6 +48,10 @@ public class PathGenerator {
     // Assign headings based on the splines.
     int cur_spline = 0;
     double cur_spline_start_pos = 0;
+    double x = 0;
+    double y = 0;
+    double cur_pos_last = 0;
+    double length_of_splines_finished = 0;
     for (int i = 0; i < traj.getNumSegments(); ++i) {
       double cur_pos = traj.getSegment(i).pos;
       
@@ -60,15 +64,22 @@ public class PathGenerator {
           traj.getSegment(i).delta_heading =
                   splines[cur_spline].angleChangeAt(percentage);
           found_spline = true;
-        } else if (cur_spline < splines.length) {
-          cur_spline_start_pos = cur_pos;
+        } else if (cur_spline < splines.length - 1) {
+          length_of_splines_finished += spline_lengths[cur_spline];
+          cur_spline_start_pos = length_of_splines_finished;
           ++cur_spline;
         } else {
-          traj.getSegment(i).heading = splines[splines.length].angleAt(1.0);
+          traj.getSegment(i).heading = splines[splines.length-1].angleAt(1.0);
           traj.getSegment(i).delta_heading = 
-                  splines[splines.length].angleChangeAt(1.0);
+                  splines[splines.length-1].angleChangeAt(1.0);
+          found_spline = true;
         }
       }
+      x += (cur_pos - cur_pos_last) * Math.cos(traj.getSegment(i).heading);
+      y += (cur_pos - cur_pos_last) * Math.sin(traj.getSegment(i).heading);
+      traj.getSegment(i).x = x;
+      traj.getSegment(i).y = y;
+      cur_pos_last = cur_pos;
     }
     
     return traj;
@@ -86,12 +97,7 @@ public class PathGenerator {
     double right_total = 0;
     for (int i = 0; i < input.getNumSegments(); ++i) {      
       Segment current = input.getSegment(i);
-      Segment next = current;
-      if (i < input.getNumSegments() - 1) {
-        next = input.getSegment(i+1);
-      }
-      double delta_heading = ChezyMath.getDifferenceInAngleRadians(next.heading,
-              current.heading);
+      double delta_heading = current.delta_heading;
       Segment inner, outer;
       double inner_last_pos, outer_last_pos;
       if (delta_heading > 0) {

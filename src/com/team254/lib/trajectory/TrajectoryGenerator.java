@@ -167,15 +167,14 @@ public class TrajectoryGenerator {
     }
 
     // Now assign headings by interpolating along the path.
-    // TODO(Jared341): Degrees here, radians in other files.
-    // TODO(Jared341): Set delta_heading too.
-    double total_heading_change = ChezyMath.getDifferenceInAngleDegrees(
-            start_heading, goal_heading);
+    // Don't do any wrapping because we don't know units.
+    double total_heading_change = goal_heading - start_heading;
     for (int i = 0; i < traj.getNumSegments(); ++i) {
-      traj.segments_[i].heading = ChezyMath.boundAngle0to360Degrees(
-              start_heading + total_heading_change
+      traj.segments_[i].heading =  start_heading + total_heading_change
               * (traj.segments_[i].pos)
-              / traj.segments_[traj.getNumSegments() - 1].pos);
+              / traj.segments_[traj.getNumSegments() - 1].pos;
+      traj.segments_[i].delta_heading = total_heading_change / 
+              traj.getNumSegments();
     }
 
     return traj;
@@ -248,8 +247,10 @@ public class TrajectoryGenerator {
         traj.segments_[i].pos = (last.vel
                 + traj.segments_[i].vel) / 2.0 * dt + last.pos;
       }
-
-            // Acceleration and jerk are the differences in velocity and
+      traj.segments_[i].x = traj.segments_[i].pos;
+      traj.segments_[i].y = 0;
+      
+      // Acceleration and jerk are the differences in velocity and
       // acceleration, respectively.
       traj.segments_[i].acc = (traj.segments_[i].vel - last.vel) / dt;
       traj.segments_[i].jerk = (traj.segments_[i].acc - last.acc) / dt;

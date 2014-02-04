@@ -6,6 +6,7 @@
 
 package com.team254.lib.trajectory;
 
+import com.team254.lib.util.ChezyMath;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -33,14 +34,18 @@ public class SplineTest {
     System.out.println(s.toString());
     
     for (double t = 0; t <= 1.0; t += .05 ) {
-      System.out.println("" + t + ", " + s.valueAt(t));
+      System.out.println("" + t + ", " + s.valueAt(t) + ", " + s.angleAt(t));
     }
     
     Assert.assertTrue(almostEqual(s.valueAt(0), y0));
     Assert.assertTrue(almostEqual(s.valueAt(1), y1));
     
-    Assert.assertTrue(almostEqual(s.angleAt(0), theta0));
-    Assert.assertTrue(almostEqual(s.angleAt(1), theta1));
+    Assert.assertTrue(almostEqual(
+            ChezyMath.boundAngleNegPiToPiRadians(s.angleAt(0)),
+            ChezyMath.boundAngleNegPiToPiRadians(theta0)));
+    Assert.assertTrue(almostEqual(
+            ChezyMath.boundAngleNegPiToPiRadians(s.angleAt(1)), 
+            ChezyMath.boundAngleNegPiToPiRadians(theta1)));
     
     if (is_straight) {
       double expected = Math.sqrt((x1-x0)*(x1-x0) + (y1-y0)*(y1-y0));
@@ -79,6 +84,9 @@ public class SplineTest {
   @Test
   public void testUnitLines() {
     test(0, 0, 0, 1, 0, 0, true);
+    test(0, 0, Math.PI/2, 0, 1, Math.PI/2, true);
+    test(0, 0, Math.PI, -1, 0, Math.PI, true);
+    test(0, 0, -Math.PI/2, 0, -1, -Math.PI/2, true);
     test(0, 0, Math.PI / 4, Math.sqrt(2)/2, Math.sqrt(2)/2, Math.PI / 4, true);
   }
   
@@ -118,8 +126,18 @@ public class SplineTest {
   }
   
   @Test
+  public void testRotatedStep() {
+    test(0, 0, Math.PI/4, 0, 1, Math.PI/4, false);
+  }
+  
+  @Test
   public void testInvalidInput() {
     expectFailure(0, 0, 0, 0, 0, 0);
     expectFailure(0, 0, -Math.PI / 2, 1, 0, 0);
+  }
+  
+  @Test
+  public void testProblematicSCurve() {
+    test(0, 0, 0, 3, 1, Math.PI/4, false);
   }
 }
