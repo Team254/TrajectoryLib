@@ -91,25 +91,12 @@ public class PathGenerator {
     Trajectory left = output[0];
     Trajectory right = output[1];
     
-    double left_total = 0;
-    double right_total = 0;
     for (int i = 0; i < input.getNumSegments(); ++i) {      
       Segment current = input.getSegment(i);
       double delta_heading = current.delta_heading;
-      Segment inner, outer;
-      double inner_last_pos, outer_last_pos;
-      if (delta_heading > 0) {
-        outer = right.getSegment(i);
-        inner = left.getSegment(i);
-        outer_last_pos = right_total;
-        inner_last_pos = left_total;
-      } else {
-        outer = left.getSegment(i);
-        inner = right.getSegment(i);
-        outer_last_pos = left_total;
-        inner_last_pos = right_total;
-      }
 
+      // TODO(Jared341): We can refactor away all of the radius based scaling
+      //   and just base everything off the x, y coords computed below.
       double radius, scaling_inner, scaling_outer;
       if (Math.abs(delta_heading) > 1E-6) {
         radius = current.vel * current.dt / Math.abs(delta_heading);
@@ -119,25 +106,48 @@ public class PathGenerator {
         scaling_inner = 1;
         scaling_outer = 1;
       }
-      inner.vel = scaling_inner * current.vel;
-      double inner_delta = scaling_inner * inner.vel * inner.dt;
-      inner.pos = inner_last_pos + inner_delta;
-      inner.acc = scaling_inner * current.acc;
-      inner.jerk = scaling_inner * current.jerk;
-
-      outer.vel = scaling_outer * current.vel;
-      double outer_delta = scaling_outer * outer.vel * outer.dt;
-      outer.pos = outer_last_pos + outer_delta;
-      outer.acc = scaling_outer * current.acc;
-      outer.jerk = scaling_outer * current.jerk;
       
+      double scaling_left, scaling_right;
       if (delta_heading > 0) {
-        left_total += inner_delta;
-        right_total += outer_delta;
+        scaling_right = scaling_outer;
+        scaling_left = scaling_inner;
       } else {
-        left_total += outer_delta;
-        right_total += inner_delta;
+        scaling_right = scaling_inner;
+        scaling_left = scaling_outer;
       }
+      
+      double cos_angle = Math.cos(current.heading);
+      double sin_angle = Math.sin(current.heading);
+      
+      Segment s_left = left.getSegment(i);
+      s_left.x = current.x - wheelbase_width/2*sin_angle;
+      s_left.y = current.y + wheelbase_width/2*cos_angle;
+      if (i > 0) {
+        // Get distance between current and last segment
+        s_left.pos = left.getSegment(i-1).pos + 
+                Math.sqrt((s_left.x-left.getSegment(i-1).x)*
+                (s_left.x-left.getSegment(i-1).x) + 
+                (s_left.y-left.getSegment(i-1).y)*
+                        (s_left.y-left.getSegment(i-1).y));
+      }
+      s_left.vel = scaling_left * current.vel;
+      s_left.acc = scaling_left * current.acc;
+      s_left.jerk = scaling_left * current.jerk;
+
+      Segment s_right = right.getSegment(i);
+      s_right.x = current.x + wheelbase_width/2*sin_angle;
+      s_right.y = current.y - wheelbase_width/2*cos_angle;
+      if (i > 0) {
+        // Get distance between current and last segment
+        s_right.pos = right.getSegment(i-1).pos + 
+                Math.sqrt((s_right.x-right.getSegment(i-1).x)*
+                (s_right.x-right.getSegment(i-1).x) + 
+                (s_right.y-right.getSegment(i-1).y)*
+                        (s_right.y-right.getSegment(i-1).y));
+      }
+      s_right.vel = scaling_right * current.vel;
+      s_right.acc = scaling_right * current.acc;
+      s_right.jerk = scaling_right * current.jerk;
     }
     
     return output;

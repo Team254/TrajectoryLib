@@ -76,10 +76,26 @@ public class PathGeneratorTest {
     Trajectory[] output = PathGenerator.makeLeftAndRightTrajectories(traj,
             20.0);
     
-    //System.out.println("LEFT PROFILE:");
-    //System.out.println(output[0].toString());
-    //System.out.println("RIGHT PROFILE:");
-    //System.out.println(output[1].toString());
+    System.out.println("LEFT PROFILE:");
+    System.out.println(output[0].toStringProfile());
+    System.out.println(output[0].toStringEuclidean());
+    System.out.println("RIGHT PROFILE:");
+    System.out.println(output[1].toStringProfile());
+    System.out.println(output[1].toStringEuclidean());
+    
+    // At all points, the distance from left to right should equal the wheelbase
+    // width and the angle of the line between them should be 90 degrees off the
+    // heading.
+    for (int i = 0; i < traj.getNumSegments(); ++i) {
+      Segment left = output[0].getSegment(i);
+      Segment right = output[1].getSegment(i);
+      Assert.assertTrue(Math.abs(Math.sqrt((left.x-right.x)*(left.x-right.x) + 
+              (left.y-right.y)*(left.y-right.y)) - 20.0) < 1E-3);
+      double angle_left_to_right = Math.atan2(left.y-right.y, left.x-right.x);
+      Assert.assertTrue(Math.abs(
+              ChezyMath.getDifferenceInAngleRadians(angle_left_to_right, 
+                      traj.getSegment(i).heading + Math.PI/2)) < 1E-3);
+    }
   }
   
   public PathGeneratorTest() {
@@ -139,9 +155,9 @@ public class PathGeneratorTest {
   public void testRealishAutoMode() {
     Path p = new Path(10);
     p.addWaypoint(new Path.Waypoint(0, 0, 0));
-    p.addWaypoint(new Path.Waypoint(5, 0, 0));
-    p.addWaypoint(new Path.Waypoint(16, 12, 0));
-    p.addWaypoint(new Path.Waypoint(18, 12, 0));
+    p.addWaypoint(new Path.Waypoint(5*12, 0, 0));
+    p.addWaypoint(new Path.Waypoint(16*12, 12*12, 0));
+    p.addWaypoint(new Path.Waypoint(18*12, 12*12, 0));
     test(p);
   }
 }
