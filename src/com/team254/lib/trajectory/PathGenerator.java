@@ -48,9 +48,6 @@ public class PathGenerator {
     // Assign headings based on the splines.
     int cur_spline = 0;
     double cur_spline_start_pos = 0;
-    double x = 0;
-    double y = 0;
-    double cur_pos_last = 0;
     double length_of_splines_finished = 0;
     for (int i = 0; i < traj.getNumSegments(); ++i) {
       double cur_pos = traj.getSegment(i).pos;
@@ -63,6 +60,9 @@ public class PathGenerator {
           traj.getSegment(i).heading = splines[cur_spline].angleAt(percentage);
           traj.getSegment(i).delta_heading =
                   splines[cur_spline].angleChangeAt(percentage);
+          double[] coords = splines[cur_spline].getXandY(percentage);
+          traj.getSegment(i).x = coords[0];
+          traj.getSegment(i).y = coords[1];
           found_spline = true;
         } else if (cur_spline < splines.length - 1) {
           length_of_splines_finished += spline_lengths[cur_spline];
@@ -72,14 +72,12 @@ public class PathGenerator {
           traj.getSegment(i).heading = splines[splines.length-1].angleAt(1.0);
           traj.getSegment(i).delta_heading = 
                   splines[splines.length-1].angleChangeAt(1.0);
+          double[] coords = splines[splines.length-1].getXandY(1.0);
+          traj.getSegment(i).x = coords[0];
+          traj.getSegment(i).y = coords[1];
           found_spline = true;
         }
       }
-      x += (cur_pos - cur_pos_last) * Math.cos(traj.getSegment(i).heading);
-      y += (cur_pos - cur_pos_last) * Math.sin(traj.getSegment(i).heading);
-      traj.getSegment(i).x = x;
-      traj.getSegment(i).y = y;
-      cur_pos_last = cur_pos;
     }
     
     return traj;

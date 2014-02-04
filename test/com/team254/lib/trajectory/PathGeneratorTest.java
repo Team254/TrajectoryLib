@@ -8,6 +8,7 @@ package com.team254.lib.trajectory;
 
 import com.team254.lib.trajectory.Trajectory.Segment;
 import static com.team254.lib.trajectory.TrajectoryGeneratorTest.test;
+import com.team254.lib.util.ChezyMath;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -24,16 +25,28 @@ import static org.junit.Assert.*;
  */
 public class PathGeneratorTest {
   
-  static double distanceToClosest(Trajectory traj, Path.Waypoint waypoint) {
+  static double distanceToClosest(Trajectory traj, Path.Waypoint waypoint,
+          Trajectory.Segment closest_segment) {
     double closest = Double.MAX_VALUE;
+    int closest_id = -1;
     for (int i = 0; i < traj.getNumSegments(); ++i) {
       Segment segment = traj.getSegment(i);
       double distance = Math.sqrt(
               (segment.x-waypoint.x)*(segment.x-waypoint.x) + 
               (segment.y-waypoint.y)*(segment.y-waypoint.y));
-      closest = Math.min(distance, closest);
+      if (distance < closest) {
+        closest = distance;
+        closest_segment.x = waypoint.x;
+        closest_segment.y = waypoint.y;
+        closest_segment.heading = segment.heading;
+        closest_id = i;
+      }
     }
+    System.out.println("Closest point segment #: " + closest_id);
     System.out.println("Closest point distance: " + closest);
+    System.out.println("Closest point heading difference: " + 
+            ChezyMath.getDifferenceInAngleRadians(closest_segment.heading, 
+                    waypoint.theta));
     return closest;
   }
   
@@ -45,15 +58,19 @@ public class PathGeneratorTest {
     config.max_vel = 100.0;
     Trajectory traj = PathGenerator.generateFromPath(path, config);
     
-    // TODO: Check some stuff
     System.out.print(traj.toStringProfile());
     System.out.print(traj.toStringEuclidean());
     System.out.println("Final distance=" +
             traj.getSegment(traj.getNumSegments()-1).pos);
     
+    // The trajectory should be close (allowing for loss of precision) to each
+    // desired waypoint.
     for (int i = 0; i < path.getNumWaypoints(); ++i) {
       Path.Waypoint waypoint = path.getWaypoint(i);
-      Assert.assertTrue(4 > distanceToClosest(traj, waypoint));
+      Segment closest = new Segment();
+      Assert.assertTrue(1 > distanceToClosest(traj, waypoint, closest));
+      Assert.assertTrue(ChezyMath.getDifferenceInAngleRadians(closest.heading,
+              waypoint.theta) < 1E-6);
     }
     
     Trajectory[] output = PathGenerator.makeLeftAndRightTrajectories(traj,
