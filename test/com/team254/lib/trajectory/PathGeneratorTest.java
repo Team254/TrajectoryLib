@@ -134,4 +134,14 @@ public class PathGeneratorTest {
     p.addWaypoint(new Path.Waypoint(40, 0, 0));
     test(p);
   }
+  
+  @Test
+  public void testRealishAutoMode() {
+    Path p = new Path(10);
+    p.addWaypoint(new Path.Waypoint(0, 0, 0));
+    p.addWaypoint(new Path.Waypoint(5, 0, 0));
+    p.addWaypoint(new Path.Waypoint(16, 12, 0));
+    p.addWaypoint(new Path.Waypoint(18, 12, 0));
+    test(p);
+  }
 }
