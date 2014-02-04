@@ -30,7 +30,7 @@ public class SplineTest {
           double theta1, boolean is_straight) {
     Spline s = new Spline();
     Assert.assertTrue(Spline.reticulateSplines(x0, y0, theta0, x1, y1, theta1,
-            s, Spline.Hermite));
+            s, Spline.CubicHermite));
     System.out.println(s.toString());
     
     for (double t = 0; t <= 1.0; t += .05 ) {
@@ -59,7 +59,7 @@ public class SplineTest {
           double y1, double theta1) {
     Spline s = new Spline();
     Assert.assertFalse(Spline.reticulateSplines(x0, y0, theta0, x1, y1, theta1,
-            s, Spline.Hermite));
+            s, Spline.CubicHermite));
   }
   
   public SplineTest() {

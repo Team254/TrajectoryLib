@@ -20,7 +20,7 @@ public class Spline {
     }
   }
   
-  public static final Type Hermite = new Type("Hermite");
+  public static final Type CubicHermite = new Type("CubicHermite");
   
   double a_;  // ax^3
   double b_;  // + bx^2
@@ -62,7 +62,7 @@ public class Spline {
     result.x_distance_ = x1_hat;
     result.theta_offset_ = Math.atan2(y1-y0, x1-x0);
     
-    if (type == Hermite) {
+    if (type == CubicHermite) {
       double theta0_hat = ChezyMath.getDifferenceInAngleRadians(
               result.theta_offset_, theta0);
       double theta1_hat = ChezyMath.getDifferenceInAngleRadians(
