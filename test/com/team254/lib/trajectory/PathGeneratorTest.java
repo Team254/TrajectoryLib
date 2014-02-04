@@ -114,4 +114,24 @@ public class PathGeneratorTest {
     p.addWaypoint(new Path.Waypoint(30*12, 10*12, 0));
     test(p);
   }
+  
+  @Test
+  public void testZigZag() {
+    Path p = new Path(10);
+    p.addWaypoint(new Path.Waypoint(0, 0, 0));
+    p.addWaypoint(new Path.Waypoint(10, 5, 0));
+    p.addWaypoint(new Path.Waypoint(30, -5, 0));
+    p.addWaypoint(new Path.Waypoint(40, 0, 0));
+    test(p);
+  }
+ 
+  @Test
+  public void testZigZagWithHeadings() {
+    Path p = new Path(10);
+    p.addWaypoint(new Path.Waypoint(0, 0, 0));
+    p.addWaypoint(new Path.Waypoint(5, 2.5, Math.PI/5));
+    p.addWaypoint(new Path.Waypoint(25, -2.5, -Math.PI/5));
+    p.addWaypoint(new Path.Waypoint(40, 0, 0));
+    test(p);
+  }
 }
