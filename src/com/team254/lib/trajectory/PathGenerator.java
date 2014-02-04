@@ -33,7 +33,7 @@ public class PathGenerator {
     for (int i = 0; i < splines.length; ++i) {
       splines[i] = new Spline();
       if (!Spline.reticulateSplines(path.getWaypoint(i), 
-              path.getWaypoint(i+1), splines[i])) {
+              path.getWaypoint(i+1), splines[i], Spline.Hermite)) {
         return null;
       }
       spline_lengths[i] = splines[i].calculateLength();

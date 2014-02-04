@@ -8,6 +8,20 @@ import com.team254.lib.util.ChezyMath;
  * @author Jared341
  */
 public class Spline {
+  public static class Type {
+    private final String value_;
+    
+    private Type(String value) {
+      this.value_ = value;
+    }
+    
+    public String toString() {
+      return value_;
+    }
+  }
+  
+  public static final Type Hermite = new Type("Hermite");
+  
   double a_;  // ax^3
   double b_;  // + bx^2
   double c_;  // + cx
@@ -29,13 +43,13 @@ public class Spline {
   }
   
   public static boolean reticulateSplines(Path.Waypoint start,
-          Path.Waypoint goal, Spline result) {
+          Path.Waypoint goal, Spline result, Type type) {
     return reticulateSplines(start.x, start.y, start.theta, goal.x, goal.y,
-            goal.theta, result);
+            goal.theta, result, type);
   }
   
   public static boolean reticulateSplines(double x0, double y0, double theta0,
-          double x1, double y1, double theta1, Spline result) {
+          double x1, double y1, double theta1, Spline result, Type type) {
     System.out.println("Reticulating splines...");
     
     // Transform x to the origin
@@ -47,34 +61,38 @@ public class Spline {
     }
     result.x_distance_ = x1_hat;
     result.theta_offset_ = Math.atan2(y1-y0, x1-x0);
-    double theta0_hat = ChezyMath.getDifferenceInAngleRadians(
-            result.theta_offset_, theta0);
-    double theta1_hat = ChezyMath.getDifferenceInAngleRadians(
-            result.theta_offset_, theta1);
     
-    // We cannot handle vertical slopes in our rotated, translated basis.
-    // This would mean the user wants to end up 90 degrees off of the straight
-    // line between p0 and p1.
-    if (almostEqual(Math.abs(theta0_hat), Math.PI/2) ||
-            almostEqual(Math.abs(theta1_hat), Math.PI/2)) {
-      return false;
+    if (type == Hermite) {
+      double theta0_hat = ChezyMath.getDifferenceInAngleRadians(
+              result.theta_offset_, theta0);
+      double theta1_hat = ChezyMath.getDifferenceInAngleRadians(
+              result.theta_offset_, theta1);
+
+      // We cannot handle vertical slopes in our rotated, translated basis.
+      // This would mean the user wants to end up 90 degrees off of the straight
+      // line between p0 and p1.
+      if (almostEqual(Math.abs(theta0_hat), Math.PI/2) ||
+              almostEqual(Math.abs(theta1_hat), Math.PI/2)) {
+        return false;
+      }
+      // We also cannot handle the case that the end angle is facing towards the
+      // start angle (total turn > 90 degrees).
+      if (Math.abs(ChezyMath.getDifferenceInAngleRadians(theta0_hat, 
+              theta1_hat)) 
+              >= Math.PI/2) {
+        return false;
+      }
+
+      // Turn angles into derivatives (slopes)
+      double yp0_hat = Math.tan(theta0_hat);
+      double yp1_hat = Math.tan(theta1_hat);
+
+      // Calculate the cubic spline coefficients
+      result.a_ = (yp1_hat + yp0_hat) / (x1_hat*x1_hat);
+      result.b_ = -(2*yp0_hat + yp1_hat) / x1_hat;
+      result.c_ = yp0_hat;
     }
-    // We also cannot handle the case that the end angle is facing towards the
-    // start angle (total turn > 90 degrees).
-    if (Math.abs(ChezyMath.getDifferenceInAngleRadians(theta0_hat, theta1_hat)) 
-            >= Math.PI/2) {
-      return false;
-    }
-    
-    // Turn angles into derivatives (slopes)
-    double yp0_hat = Math.tan(theta0_hat);
-    double yp1_hat = Math.tan(theta1_hat);
-    
-    // Calculate the cubic spline coefficients
-    result.a_ = (yp1_hat + yp0_hat) / (x1_hat*x1_hat);
-    result.b_ = -(2*yp0_hat + yp1_hat) / x1_hat;
-    result.c_ = yp0_hat;
-    
+
     return true;
   }
   
