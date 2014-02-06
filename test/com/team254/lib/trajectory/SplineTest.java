@@ -28,30 +28,45 @@ public class SplineTest {
   
   public void test(double x0, double y0, double theta0, double x1, double y1,
           double theta1, boolean is_straight) {
-    Spline s = new Spline();
-    Assert.assertTrue(Spline.reticulateSplines(x0, y0, theta0, x1, y1, theta1,
-            s, Spline.CubicHermite));
-    System.out.println(s.toString());
-    
-    for (double t = 0; t <= 1.0; t += .05 ) {
-      System.out.println("" + t + ", " + s.valueAt(t) + ", " + s.angleAt(t));
-    }
-    
-    Assert.assertTrue(almostEqual(s.valueAt(0), y0));
-    Assert.assertTrue(almostEqual(s.valueAt(1), y1));
-    
-    Assert.assertTrue(almostEqual(
-            ChezyMath.boundAngleNegPiToPiRadians(s.angleAt(0)),
-            ChezyMath.boundAngleNegPiToPiRadians(theta0)));
-    Assert.assertTrue(almostEqual(
-            ChezyMath.boundAngleNegPiToPiRadians(s.angleAt(1)), 
-            ChezyMath.boundAngleNegPiToPiRadians(theta1)));
-    
-    if (is_straight) {
-      double expected = Math.sqrt((x1-x0)*(x1-x0) + (y1-y0)*(y1-y0));
-      System.out.println("Expected length=" + expected + "; actual=" +
-              s.calculateLength());
-      Assert.assertTrue(almostEqual(s.calculateLength(), expected));
+    Spline.Type[] types = {Spline.CubicHermite, Spline.QuinticHermite};
+    for (Spline.Type type : types) {
+      Spline s = new Spline();
+      Assert.assertTrue(Spline.reticulateSplines(x0, y0, theta0, x1, y1, theta1,
+              s, type));
+      System.out.println(s.toString());
+
+      for (double t = 0; t <= 1.0; t += .05 ) {
+        System.out.println("" + t + ", " + s.valueAt(t) + ", " + s.angleAt(t));
+      }
+
+      Assert.assertTrue(almostEqual(s.valueAt(0), y0));
+      Assert.assertTrue(almostEqual(s.valueAt(1), y1));
+
+      Assert.assertTrue(almostEqual(
+              ChezyMath.boundAngleNegPiToPiRadians(s.angleAt(0)),
+              ChezyMath.boundAngleNegPiToPiRadians(theta0)));
+      Assert.assertTrue(almostEqual(
+              ChezyMath.boundAngleNegPiToPiRadians(s.angleAt(1)), 
+              ChezyMath.boundAngleNegPiToPiRadians(theta1)));
+
+      if (is_straight) {
+        double expected = Math.sqrt((x1-x0)*(x1-x0) + (y1-y0)*(y1-y0));
+        System.out.println("Expected length=" + expected + "; actual=" +
+                s.calculateLength());
+        Assert.assertTrue(almostEqual(s.calculateLength(), expected));
+      }
+      
+      if (type == Spline.QuinticHermite) {
+        // Second derivatives should be 0
+        Assert.assertTrue(almostEqual(0, s.angleChangeAt(0)));
+        Assert.assertTrue(almostEqual(0, s.angleChangeAt(1)));
+ 
+        System.out.println("From (" + x0 + "," + y0 + ") to (" + x1 + "," + y1 +
+                ")");
+        for (double t = 0; t <= 1.04; t += .05 ) {
+          System.out.println(t + "\t" + s.angleAt(t));
+        }
+      }
     }
   }
   
@@ -139,5 +154,12 @@ public class SplineTest {
   @Test
   public void testProblematicSCurve() {
     test(0, 0, 0, 3, 1, Math.PI/4, false);
+  }
+  
+  @Test
+  public void testRegressionQuintic1() {
+    test(0, 0, 0, 10, 5, 0, false);
+    test(10, 5, 0, 30, -5, 0, false);
+    test(30, -5, 0, 40, 0, 0, false);
   }
 }

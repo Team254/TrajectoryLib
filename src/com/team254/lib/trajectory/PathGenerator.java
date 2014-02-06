@@ -33,7 +33,7 @@ public class PathGenerator {
     for (int i = 0; i < splines.length; ++i) {
       splines[i] = new Spline();
       if (!Spline.reticulateSplines(path.getWaypoint(i), 
-              path.getWaypoint(i+1), splines[i], Spline.CubicHermite)) {
+              path.getWaypoint(i+1), splines[i], Spline.QuinticHermite)) {
         return null;
       }
       spline_lengths[i] = splines[i].calculateLength();
@@ -93,29 +93,6 @@ public class PathGenerator {
     
     for (int i = 0; i < input.getNumSegments(); ++i) {      
       Segment current = input.getSegment(i);
-      double delta_heading = current.delta_heading;
-
-      // TODO(Jared341): We can refactor away all of the radius based scaling
-      //   and just base everything off the x, y coords computed below.
-      double radius, scaling_inner, scaling_outer;
-      if (Math.abs(delta_heading) > 1E-6) {
-        radius = current.vel * current.dt / Math.abs(delta_heading);
-        scaling_inner = (radius - wheelbase_width/2) / radius;
-        scaling_outer = (radius + wheelbase_width/2) / radius;
-      } else {
-        scaling_inner = 1;
-        scaling_outer = 1;
-      }
-      
-      double scaling_left, scaling_right;
-      if (delta_heading > 0) {
-        scaling_right = scaling_outer;
-        scaling_left = scaling_inner;
-      } else {
-        scaling_right = scaling_inner;
-        scaling_left = scaling_outer;
-      }
-      
       double cos_angle = Math.cos(current.heading);
       double sin_angle = Math.sin(current.heading);
       

@@ -69,8 +69,10 @@ public class PathGeneratorTest {
       Path.Waypoint waypoint = path.getWaypoint(i);
       Segment closest = new Segment();
       Assert.assertTrue(1 > distanceToClosest(traj, waypoint, closest));
-      Assert.assertTrue(ChezyMath.getDifferenceInAngleRadians(closest.heading,
-              waypoint.theta) < 1E-6);
+      double heading_diff = Math.abs(ChezyMath.getDifferenceInAngleRadians(
+              closest.heading, waypoint.theta));
+      System.out.println("Heading diff: " + heading_diff);
+      Assert.assertTrue(heading_diff < 1E-2);
     }
     
     Trajectory[] output = PathGenerator.makeLeftAndRightTrajectories(traj,
@@ -115,6 +117,15 @@ public class PathGeneratorTest {
   
   @After
   public void tearDown() {
+  }
+  
+  @Test
+  public void testSimplePath() {
+    Path p = new Path(10);
+    p.addWaypoint(new Path.Waypoint(0, 0, 0));
+    p.addWaypoint(new Path.Waypoint(100, 0, 0));
+    p.addWaypoint(new Path.Waypoint(150, 50, Math.PI/4));
+    test(p);
   }
   
   @Test
