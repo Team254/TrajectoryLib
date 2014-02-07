@@ -158,7 +158,7 @@ public class Spline {
     // Interpolate between samples.
     double interpolated = t;
     if (arc_length != last_arc_length) {
-      t += ((distance - last_arc_length)/
+      interpolated += ((distance - last_arc_length)/
             (arc_length - last_arc_length) - 1)/(double)kNumSamples;
     }
     return interpolated;
