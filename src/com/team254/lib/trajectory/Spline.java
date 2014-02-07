@@ -120,10 +120,15 @@ public class Spline {
     
     final int kNumSamples = 100000;
     double arc_length = 0;
+    double t, dydt;
+    double integrand, last_integrand = 
+            Math.sqrt(1 + derivativeAt(0)*derivativeAt(0)) / kNumSamples;
     for (int i = 1; i <= kNumSamples; ++i) {
-      double t = ((double)i) / kNumSamples;
-      double dydt = derivativeAt(t);
-      arc_length += Math.sqrt(1 + dydt*dydt) / kNumSamples;
+      t = ((double)i) / kNumSamples;
+      dydt = derivativeAt(t);
+      integrand = Math.sqrt(1 + dydt*dydt) / kNumSamples;
+      arc_length += (integrand + last_integrand)/2;
+      last_integrand = integrand;
     }
     arc_length_ = knot_distance_*arc_length;
     return arc_length_;
@@ -134,13 +139,19 @@ public class Spline {
     double arc_length = 0;
     double t = 0;
     double last_arc_length = 0;
+    double dydt;
+    double integrand, last_integrand = 
+            Math.sqrt(1 + derivativeAt(0)*derivativeAt(0)) / kNumSamples;
+    distance /= knot_distance_;
     for (int i = 1; i <= kNumSamples; ++i) {
       t = ((double)i) / kNumSamples;
-      double dydt = derivativeAt(t);
-      arc_length += knot_distance_ * Math.sqrt(1 + dydt*dydt) / kNumSamples;
+      dydt = derivativeAt(t);
+      integrand = Math.sqrt(1 + dydt*dydt) / kNumSamples;
+      arc_length += (integrand + last_integrand)/2;
       if (arc_length > distance) {
         break;
       }
+      last_integrand = integrand;
       last_arc_length = arc_length;
     }
     
