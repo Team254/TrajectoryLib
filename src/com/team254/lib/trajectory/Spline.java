@@ -40,11 +40,13 @@ public class Spline {
   // Add these to the output of the spline to obtain world coordinates.
   double y_offset_;
   double x_offset_;
-  double x_distance_;
+  double knot_distance_;
   double theta_offset_;
+  double arc_length_;
   
   Spline() {
     // All splines should be made via the static interface
+    arc_length_ = -1;
   }
   
   private static boolean almostEqual(double x, double y) {
@@ -69,7 +71,7 @@ public class Spline {
     if (x1_hat == 0) {
       return false;
     }
-    result.x_distance_ = x1_hat;
+    result.knot_distance_ = x1_hat;
     result.theta_offset_ = Math.atan2(y1-y0, x1-x0);
     double theta0_hat = ChezyMath.getDifferenceInAngleRadians(
             result.theta_offset_, theta0);
@@ -112,23 +114,50 @@ public class Spline {
   }
   
   public double calculateLength() {
-    final int kNumSamples = 10000;
-    double arc_length = 0;
-    for (int i = 0; i <= kNumSamples; ++i) {
-      double x = ((double)i) / kNumSamples;
-      double dydx = derivativeAt(x);
-      arc_length += Math.sqrt(1 + dydx*dydx);
+    if (arc_length_ >= 0) {
+      return arc_length_;
     }
-    arc_length /= (kNumSamples + 1);
-    arc_length *= x_distance_;
-    return arc_length;
+    
+    final int kNumSamples = 100000;
+    double arc_length = 0;
+    for (int i = 1; i <= kNumSamples; ++i) {
+      double t = ((double)i) / kNumSamples;
+      double dydt = derivativeAt(t);
+      arc_length += Math.sqrt(1 + dydt*dydt) / kNumSamples;
+    }
+    arc_length_ = knot_distance_*arc_length;
+    return arc_length_;
+  }
+  
+  public double getPercentageForDistance(double distance) {
+    final int kNumSamples = 100000;
+    double arc_length = 0;
+    double t = 0;
+    double last_arc_length = 0;
+    for (int i = 1; i <= kNumSamples; ++i) {
+      t = ((double)i) / kNumSamples;
+      double dydt = derivativeAt(t);
+      arc_length += knot_distance_ * Math.sqrt(1 + dydt*dydt) / kNumSamples;
+      if (arc_length > distance) {
+        break;
+      }
+      last_arc_length = arc_length;
+    }
+    
+    // Interpolate between samples.
+    double interpolated = t;
+    if (arc_length != last_arc_length) {
+      t += ((distance - last_arc_length)/
+            (arc_length - last_arc_length) - 1)/(double)kNumSamples;
+    }
+    return interpolated;
   }
   
   public double[] getXandY(double percentage) {
     double[] result = new double[2];
     
     percentage = Math.max(Math.min(percentage, 1), 0);
-    double x_hat = percentage*x_distance_;
+    double x_hat = percentage*knot_distance_;
     double y_hat = (a_*x_hat + b_)*x_hat*x_hat*x_hat*x_hat + 
             c_*x_hat*x_hat*x_hat + d_*x_hat*x_hat + e_*x_hat;
     
@@ -142,7 +171,7 @@ public class Spline {
   
   public double valueAt(double percentage) {
     percentage = Math.max(Math.min(percentage, 1), 0);
-    double x_hat = percentage*x_distance_;
+    double x_hat = percentage*knot_distance_;
     double y_hat = (a_*x_hat + b_)*x_hat*x_hat*x_hat*x_hat + 
             c_*x_hat*x_hat*x_hat + d_*x_hat*x_hat + e_*x_hat;
     
@@ -156,7 +185,7 @@ public class Spline {
   private double derivativeAt(double percentage) {
     percentage = Math.max(Math.min(percentage, 1), 0);
     
-    double x_hat = percentage*x_distance_;
+    double x_hat = percentage*knot_distance_;
     double yp_hat = (5*a_*x_hat + 4*b_)*x_hat*x_hat*x_hat + 3*c_*x_hat*x_hat + 
             2*d_*x_hat + e_;
     
@@ -166,7 +195,7 @@ public class Spline {
   private double secondDerivativeAt(double percentage) {
     percentage = Math.max(Math.min(percentage, 1), 0);
     
-    double x_hat = percentage*x_distance_;
+    double x_hat = percentage*knot_distance_;
     double ypp_hat = (20*a_*x_hat + 12*b_)*x_hat*x_hat + 6*c_*x_hat + 2*d_;
     
     return ypp_hat;

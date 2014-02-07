@@ -56,7 +56,9 @@ public class PathGenerator {
       while (!found_spline) {
         double cur_pos_relative = cur_pos - cur_spline_start_pos;
         if (cur_pos_relative <= spline_lengths[cur_spline]) {
-          double percentage = cur_pos_relative / spline_lengths[cur_spline];
+          double percentage = splines[cur_spline].getPercentageForDistance(
+                  cur_pos_relative);
+          //double percentage = cur_pos_relative / spline_lengths[cur_spline];
           traj.getSegment(i).heading = splines[cur_spline].angleAt(percentage);
           traj.getSegment(i).delta_heading =
                   splines[cur_spline].angleChangeAt(percentage);
@@ -83,6 +85,14 @@ public class PathGenerator {
     return traj;
   }
   
+  /**
+   * Generate left and right wheel trajectories from a reference.
+   * 
+   * @param input The reference trajectory.
+   * @param wheelbase_width The center-to-center distance between the left and
+   * right sides.
+   * @return [0] is left, [1] is right
+   */
   public static Trajectory[] makeLeftAndRightTrajectories(Trajectory input,
           double wheelbase_width) {
     Trajectory[] output = new Trajectory[2];

@@ -171,4 +171,13 @@ public class PathGeneratorTest {
     p.addWaypoint(new Path.Waypoint(18*12, 12*12, 0));
     test(p);
   }
+  
+  @Test
+  public void testDiscontinuity() {
+    Path p = new Path(10);
+    p.addWaypoint(new Path.Waypoint(0, 0, 0));
+    p.addWaypoint(new Path.Waypoint(60, 0, 0));
+    p.addWaypoint(new Path.Waypoint(200, 100, 0));
+    test(p);
+  }
 }

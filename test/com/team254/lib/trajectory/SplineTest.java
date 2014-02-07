@@ -67,6 +67,23 @@ public class SplineTest {
           System.out.println(t + "\t" + s.angleAt(t));
         }
       }
+      
+      // Test arc length estimates
+      double length = s.calculateLength();
+      System.out.println("Arc Length: " + length);
+      double x_last = x0;
+      double y_last = y0;
+      for (int i = 1; i <= 100; ++i) {
+        double percentage = s.getPercentageForDistance(i*length/100);
+        double[] xy = s.getXandY(percentage);
+        double measured = Math.sqrt((xy[0]-x_last)*(xy[0]-x_last) + 
+                (xy[1]-y_last)*(xy[1]-y_last));
+        System.out.println(i + "\t" + percentage + "\t" + length/100 + "\t" 
+                + measured);
+        x_last = xy[0];
+        y_last = xy[1];
+        Assert.assertTrue(almostEqual(measured/1E3, length/100/1E3));
+      }
     }
   }
   
@@ -153,7 +170,7 @@ public class SplineTest {
   
   @Test
   public void testProblematicSCurve() {
-    test(0, 0, 0, 3, 1, Math.PI/4, false);
+    test(0, 0, 0, 3, 4, Math.PI/4, false);
   }
   
   @Test
