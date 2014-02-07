@@ -58,7 +58,6 @@ public class PathGenerator {
         if (cur_pos_relative <= spline_lengths[cur_spline]) {
           double percentage = splines[cur_spline].getPercentageForDistance(
                   cur_pos_relative);
-          //double percentage = cur_pos_relative / spline_lengths[cur_spline];
           traj.getSegment(i).heading = splines[cur_spline].angleAt(percentage);
           traj.getSegment(i).delta_heading =
                   splines[cur_spline].angleChangeAt(percentage);
