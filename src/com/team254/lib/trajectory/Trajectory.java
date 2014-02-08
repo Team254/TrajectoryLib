@@ -15,6 +15,18 @@ public class Trajectory {
     public Segment() {
     }
 
+    public Segment(double pos, double vel, double acc, double jerk,
+            double heading, double dt, double x, double y) {
+      this.pos = pos;
+      this.vel = vel;
+      this.acc = acc;
+      this.jerk = jerk;
+      this.heading = heading;
+      this.dt = dt;
+      this.x = x;
+      this.y = y;
+    }
+
     public Segment(Segment to_copy) {
       pos = to_copy.pos;
       vel = to_copy.vel;

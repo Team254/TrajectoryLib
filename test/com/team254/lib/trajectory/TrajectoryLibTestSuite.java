@@ -21,7 +21,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
   com.team254.lib.trajectory.TrajectoryGeneratorTest.class,
   com.team254.lib.trajectory.SplineTest.class,
-  com.team254.lib.trajectory.PathGeneratorTest.class})
+  com.team254.lib.trajectory.PathGeneratorTest.class,
+  com.team254.lib.trajectory.io.SerializationTest.class})
 public class TrajectoryLibTestSuite {
 
   @BeforeClass
