@@ -9,23 +9,18 @@ import com.team254.lib.trajectory.Trajectory;
  */
 public class JavaSerializer implements IPathSerializer {
 
+  /**
+   * Generate a Java source code file from a set of Trajectories.
+   * 
+   * For example output, see the unit test.
+   * 
+   * @param filename The name of the Java file *including package!*
+   * @param names The filenames to associate with the trajectories.
+   * @param trajectories The trajectories.  Must be the same length as names!
+   * @return A complete Java file as a string.
+   */
   public String serialize(String filename, String[] names,
           Trajectory[] trajectories) {
-    if (names.length != trajectories.length) {
-      return "";
-    }
-    /* Template:
-     package xxx;
-    
-     import com.team254.lib.trajectory.Trajectory;
-    
-     public class xxx {
-     public Trajectory.Segment[] <<names[xxx]>> = {
-     new Segment(...),
-     }
-     }
-     */
-
     // Split filename
     String[] split_filename = filename.split("\\.");
     String package_name = "";
@@ -64,7 +59,7 @@ public class JavaSerializer implements IPathSerializer {
                 + seg.jerk + ", " + seg.heading + ", " + seg.dt + ", "
                 + seg.x + ", " + seg.y + "),\n";
       }
-      contents += "  }\n\n";
+      contents += "  };\n\n";
     }
     contents += "}\n";
     return contents;
