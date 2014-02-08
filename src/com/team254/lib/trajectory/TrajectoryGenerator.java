@@ -1,7 +1,5 @@
 package com.team254.lib.trajectory;
 
-import com.team254.lib.util.ChezyMath;
-
 /**
  * Factory class for creating Trajectories.
  *
@@ -173,8 +171,6 @@ public class TrajectoryGenerator {
       traj.segments_[i].heading =  start_heading + total_heading_change
               * (traj.segments_[i].pos)
               / traj.segments_[traj.getNumSegments() - 1].pos;
-      traj.segments_[i].delta_heading = total_heading_change / 
-              traj.getNumSegments();
     }
 
     return traj;

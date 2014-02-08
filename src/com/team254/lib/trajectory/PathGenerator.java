@@ -1,15 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.team254.lib.trajectory;
-
-import com.team254.lib.trajectory.Trajectory.Segment;
-import static com.team254.lib.trajectory.TrajectoryGenerator.SCurvesStrategy;
-import static com.team254.lib.trajectory.TrajectoryGenerator.generate;
-import com.team254.lib.util.ChezyMath;
 
 /**
  * Generate a smooth Trajectory from a Path.
@@ -19,6 +8,12 @@ import com.team254.lib.util.ChezyMath;
  * @author Jared341
  */
 public class PathGenerator {
+  public static Trajectory[] generateLeftAndRightFromPath(Path path,
+          TrajectoryGenerator.Config config, double wheelbase_width) {
+    return makeLeftAndRightTrajectories(generateFromPath(path, config),
+            wheelbase_width);
+  }
+  
   public static Trajectory generateFromPath(Path path,
           TrajectoryGenerator.Config config) {
     if (path.getNumWaypoints() < 2) {
@@ -41,9 +36,9 @@ public class PathGenerator {
     }
     
     // Generate a smooth trajectory over the total distance.
-    Trajectory traj = generate(config, SCurvesStrategy, 0.0,
-            path.getWaypoint(0).theta, total_distance, 0.0,
-            path.getWaypoint(0).theta);
+    Trajectory traj = TrajectoryGenerator.generate(config, 
+            TrajectoryGenerator.SCurvesStrategy, 0.0, path.getWaypoint(0).theta,
+            total_distance, 0.0, path.getWaypoint(0).theta);
     
     // Assign headings based on the splines.
     int cur_spline = 0;
@@ -59,8 +54,6 @@ public class PathGenerator {
           double percentage = splines[cur_spline].getPercentageForDistance(
                   cur_pos_relative);
           traj.getSegment(i).heading = splines[cur_spline].angleAt(percentage);
-          traj.getSegment(i).delta_heading =
-                  splines[cur_spline].angleChangeAt(percentage);
           double[] coords = splines[cur_spline].getXandY(percentage);
           traj.getSegment(i).x = coords[0];
           traj.getSegment(i).y = coords[1];
@@ -71,8 +64,6 @@ public class PathGenerator {
           ++cur_spline;
         } else {
           traj.getSegment(i).heading = splines[splines.length-1].angleAt(1.0);
-          traj.getSegment(i).delta_heading = 
-                  splines[splines.length-1].angleChangeAt(1.0);
           double[] coords = splines[splines.length-1].getXandY(1.0);
           traj.getSegment(i).x = coords[0];
           traj.getSegment(i).y = coords[1];
@@ -101,11 +92,11 @@ public class PathGenerator {
     Trajectory right = output[1];
     
     for (int i = 0; i < input.getNumSegments(); ++i) {      
-      Segment current = input.getSegment(i);
+      Trajectory.Segment current = input.getSegment(i);
       double cos_angle = Math.cos(current.heading);
       double sin_angle = Math.sin(current.heading);
       
-      Segment s_left = left.getSegment(i);
+      Trajectory.Segment s_left = left.getSegment(i);
       s_left.x = current.x - wheelbase_width/2*sin_angle;
       s_left.y = current.y + wheelbase_width/2*cos_angle;
       if (i > 0) {
@@ -120,7 +111,7 @@ public class PathGenerator {
         s_left.jerk = (s_left.acc - left.getSegment(i-1).acc) / s_left.dt;
       }
 
-      Segment s_right = right.getSegment(i);
+      Trajectory.Segment s_right = right.getSegment(i);
       s_right.x = current.x + wheelbase_width/2*sin_angle;
       s_right.y = current.y - wheelbase_width/2*cos_angle;
       if (i > 0) {
