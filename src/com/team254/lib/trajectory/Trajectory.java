@@ -100,12 +100,12 @@ public class Trajectory {
 
     return str;
   }
-  
+
   public String toStringProfile() {
     return toString();
   }
-  
-  public String toStringEuclidean() { 
+
+  public String toStringEuclidean() {
     String str = "Segment\tx\ty\tHeading\n";
     for (int i = 0; i < getNumSegments(); ++i) {
       Trajectory.Segment segment = getSegment(i);

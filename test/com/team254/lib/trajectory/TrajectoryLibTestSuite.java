@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.team254.lib.trajectory;
 
 import org.junit.After;
@@ -15,7 +14,7 @@ import org.junit.runners.Suite;
 
 /**
  * Test suite.
- * 
+ *
  * @author Jared341
  */
 @RunWith(Suite.class)
@@ -40,5 +39,5 @@ public class TrajectoryLibTestSuite {
   @After
   public void tearDown() throws Exception {
   }
-  
+
 }

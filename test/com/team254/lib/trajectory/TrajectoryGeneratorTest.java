@@ -69,58 +69,58 @@ public class TrajectoryGeneratorTest {
   public void testP2PStep() {
     test(100, 100, 120, TrajectoryGenerator.StepStrategy);
   }
-  
+
   @Test
   public void testP2PShortStep() {
     test(100, 100, 30, TrajectoryGenerator.StepStrategy);
   }
-  
+
   @Test
   public void testP2PTrapezoid() {
     test(0, 0, 120, TrajectoryGenerator.TrapezoidalStrategy);
   }
-  
+
   @Test
   public void testP2PShortTrapezoid() {
     test(0, 0, 30, TrajectoryGenerator.TrapezoidalStrategy);
   }
-  
+
   @Test
   public void testP2PSCurves() {
     test(0, 0, 120, TrajectoryGenerator.SCurvesStrategy);
   }
-  
+
   @Test
   public void testP2PShortSCurves() {
     test(0, 0, 30, TrajectoryGenerator.SCurvesStrategy);
   }
-  
+
   // Non-zero velocity endpoints
   @Test
   public void testRampUp() {
     test(0, 100, 120, TrajectoryGenerator.TrapezoidalStrategy);
   }
-  
+
   @Test
   public void testSlowRampUp() {
     test(0, 50, 120, TrajectoryGenerator.TrapezoidalStrategy);
   }
-  
+
   @Test
   public void testRampDown() {
     test(100, 0, 120, TrajectoryGenerator.TrapezoidalStrategy);
   }
-  
+
   @Test
   public void testSlowRampDown() {
     test(50, 0, 120, TrajectoryGenerator.TrapezoidalStrategy);
   }
-  
+
   @Test
   public void testRampUpDown() {
     test(50, 50, 120, TrajectoryGenerator.TrapezoidalStrategy);
   }
-  
+
   @Test
   public void testConstantVelTrapezoid() {
     test(100, 100, 120, TrajectoryGenerator.TrapezoidalStrategy);
