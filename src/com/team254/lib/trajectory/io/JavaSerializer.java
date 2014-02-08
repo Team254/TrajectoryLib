@@ -49,9 +49,10 @@ public class JavaSerializer implements IPathSerializer {
 
     String contents = "package " + package_name + ";\n\n";
     contents += "import com.team254.lib.trajectory.Trajectory;\n\n";
-    contents += "public class " + class_name + " {\n";
+    contents += "public abstract class " + class_name + " {\n";
     for (int i = 0; i < names.length; ++i) {
-      contents += "  public Trajectory.Segment[] " + names[i] + " = {\n";
+      contents += "  public static final Trajectory.Segment[] " + names[i] + 
+              " = {\n";
       for (int s = 0; s < trajectories[i].getNumSegments(); ++s) {
         Trajectory.Segment seg = trajectories[i].getSegment(s);
         contents += "    new Trajectory.Segment("
