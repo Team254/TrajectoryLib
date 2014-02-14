@@ -7,7 +7,7 @@ import com.team254.lib.trajectory.io.JavaSerializer;
  * @author Jared341
  */
 public class Main {
-  public static void main() {
+  public static void main(String[] args) {
     TrajectoryGenerator.Config config = new TrajectoryGenerator.Config();
     config.dt = .01;
     config.max_acc = 12.0;
