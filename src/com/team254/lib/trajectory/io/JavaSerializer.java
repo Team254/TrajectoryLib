@@ -35,7 +35,7 @@ public class JavaSerializer implements IPathSerializer {
             path.getRightWheelTrajectory());
     
     contents += "  public " + path.getName() + "() {\n";
-    contents += "    super(" + path.getName() + ",\n";
+    contents += "    super(\"" + path.getName() + "\",\n";
     contents += "      new Trajectory.Pair(kGoLeftLeftWheel, kGoLeftRightWheel),\n";
     contents += "      new Trajectory.Pair(kGoRightLeftWheel, kGoRightRightWheel));\n";
     contents += "  }\n\n";
@@ -46,7 +46,7 @@ public class JavaSerializer implements IPathSerializer {
   
   private String serializeTrajectory(String name, Trajectory traj) {
     String contents = 
-            "  private static final Trajectory.Segment[] " + name + " = {\n";
+            "  private static final Trajectory " + name + " = new Trajectory( new Trajectory.Segment[] {\n";
     for (int i = 0; i < traj.getNumSegments(); ++i) {
       Trajectory.Segment seg = traj.getSegment(i);
       contents += "    new Trajectory.Segment("
@@ -54,7 +54,7 @@ public class JavaSerializer implements IPathSerializer {
               + seg.jerk + ", " + seg.heading + ", " + seg.dt + ", "
               + seg.x + ", " + seg.y + "),\n";
     }
-    contents += "  };\n\n";
+    contents += "  });\n\n";
     return contents;
   }
 

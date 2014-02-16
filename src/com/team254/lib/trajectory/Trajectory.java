@@ -56,11 +56,15 @@ public class Trajectory {
 
   Segment[] segments_ = null;
 
-  Trajectory(int length) {
+  public Trajectory(int length) {
     segments_ = new Segment[length];
     for (int i = 0; i < length; ++i) {
       segments_[i] = new Segment();
     }
+  }
+  
+  public Trajectory(Segment[] segments) {
+    segments_ = segments;
   }
 
   public int getNumSegments() {
