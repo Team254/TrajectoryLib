@@ -27,7 +27,7 @@ public class Path {
   }
   
   public void goRight() {
-    go_left_ = true; 
+    go_left_ = false; 
     go_left_pair_.left.setInvertedY(true);
     go_left_pair_.right.setInvertedY(true);
   }

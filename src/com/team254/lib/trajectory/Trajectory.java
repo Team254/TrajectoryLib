@@ -84,9 +84,8 @@ public class Trajectory {
         return segments_[index];
       } else {
         Segment segment = new Segment(segments_[index]);
-        segment.y *= -1;
-        segment.heading = ChezyMath.boundAngle0to2PiRadians(2*Math.PI - 
-                segment.heading);
+        segment.y *= -1.0;
+        segment.heading *= -1.0;
         return segment;
       }
     } else {
