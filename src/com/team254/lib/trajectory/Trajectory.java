@@ -7,6 +7,16 @@ package com.team254.lib.trajectory;
  * @author Jared341
  */
 public class Trajectory {
+  
+  public static class Pair {
+    public Pair(Trajectory left, Trajectory right) {
+      this.left = left;
+      this.right = right;
+    }
+    
+    public Trajectory left;
+    public Trajectory right;
+  }
 
   public static class Segment {
 

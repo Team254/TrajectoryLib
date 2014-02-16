@@ -56,8 +56,8 @@ public class Spline {
     return Math.abs(x - y) < 1E-6;
   }
 
-  public static boolean reticulateSplines(Path.Waypoint start,
-          Path.Waypoint goal, Spline result, Type type) {
+  public static boolean reticulateSplines(WaypointSequence.Waypoint start,
+          WaypointSequence.Waypoint goal, Spline result, Type type) {
     return reticulateSplines(start.x, start.y, start.theta, goal.x, goal.y,
             goal.theta, result, type);
   }

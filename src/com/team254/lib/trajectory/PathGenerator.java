@@ -1,5 +1,7 @@
 package com.team254.lib.trajectory;
 
+import com.team254.path.Path;
+
 /**
  * Generate a smooth Trajectory from a Path.
  *
@@ -8,14 +10,32 @@ package com.team254.lib.trajectory;
  * @author Jared341
  */
 public class PathGenerator {
+  /**
+   * Generate a path for autonomous driving. 
+   * 
+   * @param waypoints The waypoints to drive to (FOR THE "GO LEFT" CASE!!!!)
+   * @param config Trajectory config.
+   * @param wheelbase_width Wheelbase separation; units must be consistent with
+   * config and waypoints.
+   * @param name The name of the new path.  THIS MUST BE A VALID JAVA CLASS NAME
+   * @return The path.
+   */
+  public static Path makePath(WaypointSequence waypoints, 
+          TrajectoryGenerator.Config config, double wheelbase_width, 
+          String name) {
+    return new Path(name, 
+            generateLeftAndRightFromSeq(waypoints, config, wheelbase_width), 
+            generateLeftAndRightFromSeq(waypoints.invertY(), config, 
+                    wheelbase_width));
+  }
 
-  public static Trajectory[] generateLeftAndRightFromPath(Path path,
+  static Trajectory.Pair generateLeftAndRightFromSeq(WaypointSequence path,
           TrajectoryGenerator.Config config, double wheelbase_width) {
     return makeLeftAndRightTrajectories(generateFromPath(path, config),
             wheelbase_width);
   }
 
-  public static Trajectory generateFromPath(Path path,
+  static Trajectory generateFromPath(WaypointSequence path,
           TrajectoryGenerator.Config config) {
     if (path.getNumWaypoints() < 2) {
       return null;
@@ -84,7 +104,7 @@ public class PathGenerator {
    * right sides.
    * @return [0] is left, [1] is right
    */
-  public static Trajectory[] makeLeftAndRightTrajectories(Trajectory input,
+  static Trajectory.Pair makeLeftAndRightTrajectories(Trajectory input,
           double wheelbase_width) {
     Trajectory[] output = new Trajectory[2];
     output[0] = input.copy();
@@ -128,6 +148,6 @@ public class PathGenerator {
       }
     }
 
-    return output;
+    return new Trajectory.Pair(output[0], output[1]);
   }
 }

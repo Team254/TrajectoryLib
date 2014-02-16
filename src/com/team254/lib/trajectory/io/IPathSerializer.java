@@ -1,6 +1,6 @@
 package com.team254.lib.trajectory.io;
 
-import com.team254.lib.trajectory.Trajectory;
+import com.team254.path.Path;
 
 /**
  * Interface for methods that serialize a Path or Trajectory.
@@ -9,6 +9,5 @@ import com.team254.lib.trajectory.Trajectory;
  */
 public interface IPathSerializer {
 
-  public String serialize(String filename, String[] names,
-          Trajectory[] trajectories);
+  public String serialize(Path path);
 }

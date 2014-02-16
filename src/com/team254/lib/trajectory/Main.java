@@ -1,6 +1,7 @@
 package com.team254.lib.trajectory;
 
 import com.team254.lib.trajectory.io.JavaSerializer;
+import com.team254.path.Path;
 
 /**
  *
@@ -14,17 +15,16 @@ public class Main {
     config.max_jerk = 75.0;
     config.max_vel = 15.0;
     
-    Path p = new Path(10);
-    p.addWaypoint(new Path.Waypoint(0, 0, 0));
-    p.addWaypoint(new Path.Waypoint(6.5, 0, 0));
-    p.addWaypoint(new Path.Waypoint(15, 5, Math.PI / 6.0));
+    WaypointSequence p = new WaypointSequence(10);
+    p.addWaypoint(new WaypointSequence.Waypoint(0, 0, 0));
+    p.addWaypoint(new WaypointSequence.Waypoint(6.5, 0, 0));
+    p.addWaypoint(new WaypointSequence.Waypoint(15, 5, Math.PI / 6.0));
     
-    Trajectory[] lr = PathGenerator.generateLeftAndRightFromPath(p, config,
-        25.5/12);
+    Path path = PathGenerator.makePath(p, config,
+        25.5/12, "AutoMode1");
 
     JavaSerializer js = new JavaSerializer();
-    String[] names = {"Left", "Right"};
-    String serialized = js.serialize("com.team254.frc2014.paths.TestPath", names, lr);
+    String serialized = js.serialize(path);
     System.out.print(serialized);
   }
 }
