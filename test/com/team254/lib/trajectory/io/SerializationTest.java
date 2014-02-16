@@ -85,5 +85,14 @@ public class SerializationTest {
     TextFileSerializer tf = new TextFileSerializer();
     String serialized = tf.serialize(path);
     System.out.print(serialized);
+    
+    TextFileDeserializer tfd = new TextFileDeserializer();
+    Path deserialized = tfd.deserialize(serialized);
+    
+    Assert.assertEquals("TestPath", deserialized.getName());
+    Assert.assertEquals(deserialized.getLeftWheelTrajectory().getNumSegments(), 
+            path.getLeftWheelTrajectory().getNumSegments());
+    Assert.assertEquals(deserialized.getRightWheelTrajectory().getNumSegments(), 
+            path.getRightWheelTrajectory().getNumSegments());
   }
 }
