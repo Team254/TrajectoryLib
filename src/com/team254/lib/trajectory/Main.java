@@ -2,6 +2,7 @@ package com.team254.lib.trajectory;
 
 import com.team254.lib.trajectory.io.JavaSerializer;
 import com.team254.lib.trajectory.io.JavaStringSerializer;
+import com.team254.lib.trajectory.io.TextFileSerializer;
 import com.team254.path.Path;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -68,10 +69,10 @@ public class Main {
           kWheelbaseWidth, path_name);
 
       // Outputs to the directory supplied as the first argument.
-      JavaStringSerializer js = new JavaStringSerializer();
+      TextFileSerializer js = new TextFileSerializer();
       String serialized = js.serialize(path);
       //System.out.print(serialized);
-      String fullpath = joinPath(args[0], path_name + ".java");
+      String fullpath = joinPath(args[0], path_name + ".txt");
       if (!writeFile(fullpath, serialized)) {
         System.err.println(fullpath + " could not be written!!!!1");
         System.exit(1);
