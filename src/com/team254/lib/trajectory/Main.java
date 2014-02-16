@@ -40,9 +40,9 @@ public class Main {
   }
   
   public static void main(String[] args) {
-    if (args.length < 1) {
-      System.err.println("Needs a path!");
-      System.exit(1);
+    String file_path = "../FRC-2014/src/com/team254/frc2014/paths";
+    if (args.length >= 1) {
+      file_path = args[0];
     }
     
     TrajectoryGenerator.Config config = new TrajectoryGenerator.Config();
@@ -54,7 +54,7 @@ public class Main {
     final double kWheelbaseWidth = 25.5/12;
     {
       // Path name must be a valid Java class name.
-      final String path_name = "AutoMode1";
+      final String path_name = "CenterLanePath";
       
       // Description of this auto mode path.
       // Remember that this is for the GO LEFT CASE!
@@ -70,7 +70,7 @@ public class Main {
       JavaSerializer js = new JavaSerializer();
       String serialized = js.serialize(path);
       //System.out.print(serialized);
-      if (!writeFile(joinPath(args[0], path_name + ".java"), serialized)) {
+      if (!writeFile(joinPath(file_path, path_name + ".java"), serialized)) {
         System.err.println(path_name + " could not be written!!!!1");
       System.exit(1);
       }
