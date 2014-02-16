@@ -95,4 +95,24 @@ public class SerializationTest {
     Assert.assertEquals(deserialized.getRightWheelTrajectory().getNumSegments(), 
             path.getRightWheelTrajectory().getNumSegments());
   }
+  
+  @Test
+  public void testJavaStringSerializer() {
+    WaypointSequence p = new WaypointSequence(10);
+    p.addWaypoint(new Waypoint(0, 0, 0));
+    p.addWaypoint(new Waypoint(10, 0, 0));
+    p.addWaypoint(new Waypoint(20, 20, Math.PI / 4));
+
+    TrajectoryGenerator.Config config = new TrajectoryGenerator.Config();
+    config.dt = .01;
+    config.max_acc = 1000.0;
+    config.max_jerk = 5000.0;
+    config.max_vel = 100.0;
+
+    Path path = PathGenerator.makePath(p, config, 25.0, "TestPath");
+
+    JavaStringSerializer tf = new JavaStringSerializer();
+    String serialized = tf.serialize(path);
+    System.out.print(serialized);
+  }
 }

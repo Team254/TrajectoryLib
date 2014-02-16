@@ -18,6 +18,10 @@ public class Path {
     go_left_ = true;
   }
   
+  public Path() {
+    
+  }
+  
   public String getName() { return name_; }
   
   public void goLeft() { 
