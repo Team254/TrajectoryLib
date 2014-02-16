@@ -24,9 +24,7 @@ public class PathGenerator {
           TrajectoryGenerator.Config config, double wheelbase_width, 
           String name) {
     return new Path(name, 
-            generateLeftAndRightFromSeq(waypoints, config, wheelbase_width), 
-            generateLeftAndRightFromSeq(waypoints.invertY(), config, 
-                    wheelbase_width));
+            generateLeftAndRightFromSeq(waypoints, config, wheelbase_width));
   }
 
   static Trajectory.Pair generateLeftAndRightFromSeq(WaypointSequence path,

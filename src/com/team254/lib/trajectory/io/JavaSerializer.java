@@ -24,20 +24,14 @@ public class JavaSerializer implements IPathSerializer {
     contents += "import com.team254.path.Path;\n\n";
     contents += "public class " + path.getName() + " extends Path {\n";
     path.goLeft();
-    contents += serializeTrajectory("kGoLeftLeftWheel", 
+    contents += serializeTrajectory("kLeftWheel", 
             path.getLeftWheelTrajectory());
-    contents += serializeTrajectory("kGoLeftRightWheel", 
-            path.getRightWheelTrajectory());
-    path.goRight();
-    contents += serializeTrajectory("kGoRightLeftWheel", 
-            path.getLeftWheelTrajectory());
-    contents += serializeTrajectory("kGoRightRightWheel", 
+    contents += serializeTrajectory("kRightWheel", 
             path.getRightWheelTrajectory());
     
     contents += "  public " + path.getName() + "() {\n";
     contents += "    super(\"" + path.getName() + "\",\n";
-    contents += "      new Trajectory.Pair(kGoLeftLeftWheel, kGoLeftRightWheel),\n";
-    contents += "      new Trajectory.Pair(kGoRightLeftWheel, kGoRightRightWheel));\n";
+    contents += "      new Trajectory.Pair(kLeftWheel, kRightWheel));\n";
     contents += "  }\n\n";
 
     contents += "}\n";

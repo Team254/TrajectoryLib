@@ -54,7 +54,7 @@ public class Main {
     final double kWheelbaseWidth = 25.5/12;
     {
       // Path name must be a valid Java class name.
-      final String path_name = "AutoMode1";
+      final String path_name = "CenterLanePath";
       
       // Description of this auto mode path.
       // Remember that this is for the GO LEFT CASE!
@@ -70,9 +70,12 @@ public class Main {
       JavaSerializer js = new JavaSerializer();
       String serialized = js.serialize(path);
       //System.out.print(serialized);
-      if (!writeFile(joinPath(args[0], path_name + ".java"), serialized)) {
-        System.err.println(path_name + " could not be written!!!!1");
-      System.exit(1);
+      String fullpath = joinPath(args[0], path_name + ".java");
+      if (!writeFile(fullpath, serialized)) {
+        System.err.println(fullpath + " could not be written!!!!1");
+        System.exit(1);
+      } else {
+        System.out.println("Wrote " + fullpath);
       }
     }
   }
