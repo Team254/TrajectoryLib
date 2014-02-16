@@ -1,6 +1,7 @@
 package com.team254.lib.trajectory.io;
 
 import com.team254.path.Path;
+import java.util.StringTokenizer;
 
 /**
  * Save to a Java class with a static string, because J2ME has problems with
@@ -18,8 +19,20 @@ public class JavaStringSerializer implements IPathSerializer {
     contents += "public class " + path.getName() + " extends Path {\n";
   
     TextFileSerializer serializer = new TextFileSerializer();
+    String serialized = serializer.serialize(path);
+    
+    // J2ME can't parse multi line string literals.
+    StringTokenizer tokenizer = new StringTokenizer(serialized, "\n");
     contents += "  private static final String kSerialized = \"" + 
-            serializer.serialize(path) + "\";\n\n";
+            tokenizer.nextToken() + "\\n\"\n";
+    while (tokenizer.hasMoreTokens()) {
+      contents += "    + \"" + tokenizer.nextToken() + "\\n\"";
+      if (tokenizer.hasMoreTokens()) {
+        contents += "\n";
+      } else {
+        contents += ";\n\n";
+      }
+    }
     
     contents += "  public " + path.getName() + "() {\n";
     contents += "     TextFileDeserializer d = new TextFileDeserializer();\n";
