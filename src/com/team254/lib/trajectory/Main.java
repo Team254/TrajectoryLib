@@ -40,9 +40,9 @@ public class Main {
   }
   
   public static void main(String[] args) {
-    if (args.length < 1) {
-      System.err.println("Needs a path!");
-      System.exit(1);
+    String file_path = "../FRC-2014/src/com/team254/frc2014/paths";
+    if (args.length >= 1) {
+      file_path = args[0];
     }
     
     TrajectoryGenerator.Config config = new TrajectoryGenerator.Config();
