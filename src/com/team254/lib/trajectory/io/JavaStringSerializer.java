@@ -25,7 +25,7 @@ public class JavaStringSerializer implements IPathSerializer {
     contents += "     TextFileDeserializer d = new TextFileDeserializer();\n";
     contents += "     Path p = d.deserialize(kSerialized);\n";
     contents += "     this.name_ = p.getName();\n";
-    contents += "     this.go_left_pair_ = p.go_left_pair_;\n";
+    contents += "     this.go_left_pair_ = p.getPair();\n";
     contents += "  }\n\n";
 
     contents += "}\n";

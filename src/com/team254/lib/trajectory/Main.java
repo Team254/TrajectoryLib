@@ -1,6 +1,7 @@
 package com.team254.lib.trajectory;
 
 import com.team254.lib.trajectory.io.JavaSerializer;
+import com.team254.lib.trajectory.io.JavaStringSerializer;
 import com.team254.path.Path;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -67,7 +68,7 @@ public class Main {
           kWheelbaseWidth, path_name);
 
       // Outputs to the directory supplied as the first argument.
-      JavaSerializer js = new JavaSerializer();
+      JavaStringSerializer js = new JavaStringSerializer();
       String serialized = js.serialize(path);
       //System.out.print(serialized);
       String fullpath = joinPath(args[0], path_name + ".java");

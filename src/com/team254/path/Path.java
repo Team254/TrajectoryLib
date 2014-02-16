@@ -37,10 +37,14 @@ public class Path {
   }
   
   public Trajectory getLeftWheelTrajectory() {
-    return go_left_pair_.left;
+    return (go_left_ ? go_left_pair_.left : go_left_pair_.right);
   }
   
   public Trajectory getRightWheelTrajectory() {
-    return go_left_pair_.right;
+    return (go_left_ ? go_left_pair_.right : go_left_pair_.left);
+  }
+  
+  public Trajectory.Pair getPair() {
+    return go_left_pair_;
   }
 }
