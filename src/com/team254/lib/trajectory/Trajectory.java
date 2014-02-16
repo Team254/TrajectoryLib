@@ -92,6 +92,12 @@ public class Trajectory {
       return new Segment();
     }
   }
+  
+  public void setSegment(int index, Segment segment) {
+    if (index < getNumSegments()) {
+      segments_[index] = segment;
+    }
+  }
 
   public void scale(double scaling_factor) {
     for (int i = 0; i < getNumSegments(); ++i) {
