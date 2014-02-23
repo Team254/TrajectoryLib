@@ -79,5 +79,31 @@ public class Main {
         System.out.println("Wrote " + fullpath);
       }
     }
+    
+    {
+      // Path name must be a valid Java class name.
+      final String path_name = "StraightAheadPath";
+      
+      // Description of this auto mode path.
+      // Remember that this is for the GO LEFT CASE!
+      WaypointSequence p = new WaypointSequence(10);
+      p.addWaypoint(new WaypointSequence.Waypoint(0, 0, 0));
+      p.addWaypoint(new WaypointSequence.Waypoint(15, 0, 0));
+
+      Path path = PathGenerator.makePath(p, config,
+          kWheelbaseWidth, path_name);
+
+      // Outputs to the directory supplied as the first argument.
+      TextFileSerializer js = new TextFileSerializer();
+      String serialized = js.serialize(path);
+      //System.out.print(serialized);
+      String fullpath = joinPath(args[0], path_name + ".txt");
+      if (!writeFile(fullpath, serialized)) {
+        System.err.println(fullpath + " could not be written!!!!1");
+        System.exit(1);
+      } else {
+        System.out.println("Wrote " + fullpath);
+      }
+    }
   }
 }
