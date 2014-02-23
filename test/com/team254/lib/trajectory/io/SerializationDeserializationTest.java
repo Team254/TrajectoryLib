@@ -24,9 +24,9 @@ import static org.junit.Assert.*;
  *
  * @author jarussell
  */
-public class SerializationTest {
+public class SerializationDeserializationTest {
 
-  public SerializationTest() {
+  public SerializationDeserializationTest() {
   }
 
   @BeforeClass
@@ -67,6 +67,21 @@ public class SerializationTest {
     //Assert.assertEquals(serialized, kGoldenOutput);
   }
   
+  public boolean almostEqual(double a, double b) {
+    return Math.abs(a-b) < 1E-6;
+  }
+  
+  public void checkSegmentsEqual(Trajectory.Segment a, Trajectory.Segment b) {
+    Assert.assertTrue(almostEqual(a.acc, b.acc));
+    Assert.assertTrue(almostEqual(a.jerk, b.jerk));
+    Assert.assertTrue(almostEqual(a.vel, b.vel));
+    Assert.assertTrue(almostEqual(a.pos, b.pos));
+    Assert.assertTrue(almostEqual(a.heading, b.heading));
+    Assert.assertTrue(almostEqual(a.dt, b.dt));
+    Assert.assertTrue(almostEqual(a.x, b.x));
+    Assert.assertTrue(almostEqual(a.y, b.y));
+  }
+  
   @Test
   public void testTextFileSerialization() {
     WaypointSequence p = new WaypointSequence(10);
@@ -94,10 +109,25 @@ public class SerializationTest {
             path.getLeftWheelTrajectory().getNumSegments());
     Assert.assertEquals(deserialized.getRightWheelTrajectory().getNumSegments(), 
             path.getRightWheelTrajectory().getNumSegments());
+    
+    // Check segments as well
+    for (int i = 0; i < path.getLeftWheelTrajectory().getNumSegments(); ++i) {
+      System.out.println("Checking segment " + i);
+      Trajectory.Segment left_serialized = 
+              path.getLeftWheelTrajectory().getSegment(i);
+      Trajectory.Segment right_serialized = 
+              path.getRightWheelTrajectory().getSegment(i);
+      Trajectory.Segment left_deserialized = 
+              deserialized.getLeftWheelTrajectory().getSegment(i);
+      Trajectory.Segment right_deserialized = 
+              deserialized.getRightWheelTrajectory().getSegment(i);
+      checkSegmentsEqual(left_serialized, left_deserialized);
+      checkSegmentsEqual(right_serialized, right_deserialized);
+    }
   }
   
   @Test
-  public void testJavaStringSerializer() {
+  public void testJavaStringSerializerDeserializer() {
     WaypointSequence p = new WaypointSequence(10);
     p.addWaypoint(new Waypoint(0, 0, 0));
     p.addWaypoint(new Waypoint(10, 0, 0));

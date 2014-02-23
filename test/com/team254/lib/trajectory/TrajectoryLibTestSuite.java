@@ -22,7 +22,7 @@ import org.junit.runners.Suite;
   com.team254.lib.trajectory.TrajectoryGeneratorTest.class,
   com.team254.lib.trajectory.SplineTest.class,
   com.team254.lib.trajectory.PathGeneratorTest.class,
-  com.team254.lib.trajectory.io.SerializationTest.class})
+  com.team254.lib.trajectory.io.SerializationDeserializationTest.class})
 public class TrajectoryLibTestSuite {
 
   @BeforeClass
