@@ -1,7 +1,7 @@
 package com.team254.lib.trajectory.io;
 
 import com.team254.lib.trajectory.Trajectory;
-import com.team254.path.Path;
+import com.team254.lib.trajectory.Path;
 
 /**
  * Serialize a path to a Java file that can be compiled into a J2ME project.

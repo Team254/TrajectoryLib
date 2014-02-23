@@ -2,7 +2,7 @@ package com.team254.lib.trajectory.io;
 
 import com.team254.lib.trajectory.Trajectory;
 import com.team254.lib.trajectory.Trajectory.Segment;
-import com.team254.path.Path;
+import com.team254.lib.trajectory.Path;
 
 /**
  * Serializes a Path to a simple space and CR separated text file.

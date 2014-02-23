@@ -1,7 +1,5 @@
 package com.team254.lib.trajectory;
 
-import com.team254.path.Path;
-
 /**
  * Generate a smooth Trajectory from a Path.
  *

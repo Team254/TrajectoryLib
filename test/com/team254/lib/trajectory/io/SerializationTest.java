@@ -11,7 +11,7 @@ import com.team254.lib.trajectory.PathGenerator;
 import com.team254.lib.trajectory.Trajectory;
 import com.team254.lib.trajectory.TrajectoryGenerator;
 import com.team254.lib.trajectory.io.JavaSerializer;
-import com.team254.path.Path;
+import com.team254.lib.trajectory.Path;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.AfterClass;
