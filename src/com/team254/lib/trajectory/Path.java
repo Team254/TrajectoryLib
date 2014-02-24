@@ -1,6 +1,6 @@
 package com.team254.lib.trajectory;
 
-import com.team254.lib.trajectory.Trajectory;
+import com.team254.lib.trajectory.Trajectory.Segment;
 
 /**
  * Base class for an autonomous path.
@@ -46,5 +46,11 @@ public class Path {
   
   public Trajectory.Pair getPair() {
     return go_left_pair_;
+  }
+
+  public double getEndHeading() {
+    int numSegments = getLeftWheelTrajectory().getNumSegments();
+    Trajectory.Segment lastSegment = getLeftWheelTrajectory().getSegment(numSegments - 1);
+    return lastSegment.heading;
   }
 }
