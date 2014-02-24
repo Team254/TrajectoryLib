@@ -41,9 +41,9 @@ public class Main {
   }
   
   public static void main(String[] args) {
-    String file_path = "../FRC-2014/src/com/team254/frc2014/paths";
+    String directory = "../FRC-2014/paths";
     if (args.length >= 1) {
-      file_path = args[0];
+      directory = args[0];
     }
     
     TrajectoryGenerator.Config config = new TrajectoryGenerator.Config();
@@ -71,7 +71,7 @@ public class Main {
       TextFileSerializer js = new TextFileSerializer();
       String serialized = js.serialize(path);
       //System.out.print(serialized);
-      String fullpath = joinPath(args[0], path_name + ".txt");
+      String fullpath = joinPath(directory, path_name + ".txt");
       if (!writeFile(fullpath, serialized)) {
         System.err.println(fullpath + " could not be written!!!!1");
         System.exit(1);
@@ -97,7 +97,7 @@ public class Main {
       TextFileSerializer js = new TextFileSerializer();
       String serialized = js.serialize(path);
       //System.out.print(serialized);
-      String fullpath = joinPath(args[0], path_name + ".txt");
+      String fullpath = joinPath(directory, path_name + ".txt");
       if (!writeFile(fullpath, serialized)) {
         System.err.println(fullpath + " could not be written!!!!1");
         System.exit(1);
