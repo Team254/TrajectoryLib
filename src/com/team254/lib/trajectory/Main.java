@@ -55,9 +55,9 @@ public class Main {
     final double kWheelbaseWidth = 25.5/12;
     {
       config.dt = .01;
-      config.max_acc = 10.0;
-      config.max_jerk = 60.0;
-      config.max_vel = 15.0;
+      config.max_acc = 8.0;
+      config.max_jerk = 50.0;
+      config.max_vel = 10.0;
       // Path name must be a valid Java class name.
       final String path_name = "CenterLanePath";
       
@@ -117,9 +117,9 @@ public class Main {
      {
       // Path name must be a valid Java class name.
       config.dt = .01;
-      config.max_acc = 10.0;
-      config.max_jerk = 60.0;
-      config.max_vel = 15.0;
+      config.max_acc = 7.0;
+      config.max_jerk = 50.0;
+      config.max_vel = 10.0;
       final String path_name = "WallLanePath";
       
       // Description of this auto mode path.
