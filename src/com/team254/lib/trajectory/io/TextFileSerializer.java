@@ -41,10 +41,9 @@ public class TextFileSerializer implements IPathSerializer {
     String content = "";
     for (int i = 0; i < trajectory.getNumSegments(); ++i) {
       Segment segment = trajectory.getSegment(i);
-      content += String.format(
-              "%.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f\n", 
-              segment.pos, segment.vel, segment.acc, segment.jerk,
-              segment.heading, segment.dt, segment.x, segment.y);
+      content += segment.pos + " " + segment.vel + " " + segment.acc + " " +
+              segment.jerk + " " + segment.heading + " " + segment.dt + " " +
+              segment.x + " " + segment.y + "\n";
     }
     return content;
   }
