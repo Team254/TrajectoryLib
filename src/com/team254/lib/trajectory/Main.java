@@ -149,9 +149,9 @@ public class Main {
     
     {
       config.dt = .01;
-      config.max_acc = 10.0;
-      config.max_jerk = 60.0;
-      config.max_vel = 15.0;
+      config.max_acc = 8.0;
+      config.max_jerk = 50.0;
+      config.max_vel = 10.0;
       // Path name must be a valid Java class name.
       final String path_name = "StraightAheadPath";
       
@@ -159,7 +159,7 @@ public class Main {
       // Remember that this is for the GO LEFT CASE!
       WaypointSequence p = new WaypointSequence(10);
       p.addWaypoint(new WaypointSequence.Waypoint(0, 0, 0));
-      p.addWaypoint(new WaypointSequence.Waypoint(15.5, 0, 0));
+      p.addWaypoint(new WaypointSequence.Waypoint(13.0, 0, 0));
 
       Path path = PathGenerator.makePath(p, config,
           kWheelbaseWidth, path_name);
