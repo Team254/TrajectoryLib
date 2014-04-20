@@ -149,9 +149,9 @@ public class Main {
     
     {
       config.dt = .01;
-      config.max_acc = 11.0;
+      config.max_acc = 9.0;
       config.max_jerk = 50.0;
-      config.max_vel = 13.0;
+      config.max_vel = 11.75;
       // Path name must be a valid Java class name.
       final String path_name = "StraightAheadPath";
       
